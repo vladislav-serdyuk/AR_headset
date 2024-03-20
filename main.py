@@ -4,11 +4,15 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
+from flask import Flask, render_template, Response
 
 import GUIs
 
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
+segmentor = SelfiSegmentation()
+app = Flask(__name__)
+cap = cv2.VideoCapture(0)
 
 inited_guis = []
 
@@ -30,9 +34,6 @@ def draw_gui(img, fingers_up, fingers_touch, landmark):
         cv2.putText(img, message, (100, h // 2), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 3)
 
 
-segmentor = SelfiSegmentation()
-
-
 def process_image(frame):
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     with (mp_hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5) as hands):
@@ -45,9 +46,11 @@ def process_image(frame):
             fingers_up = []
             fingers_touch = []
 
-            if (distance(hand.landmark[tip_ids[0]], hand.landmark[17]
-                         ) > distance(hand.landmark[tip_ids[0]], typing.NamedTuple('xy', x=float, y=float)(
-                          hand.landmark[5].x * 2 - hand.landmark[17].x, hand.landmark[5].y * 2 - hand.landmark[17].y))):
+            if (distance(hand.landmark[tip_ids[0]], hand.landmark[17])
+                    > distance(hand.landmark[tip_ids[0]],
+                               typing.NamedTuple('xy', x=float, y=float)(hand.landmark[5].x * 2 - hand.landmark[17].x,
+                                                                         hand.landmark[5].y * 2 - hand.landmark[17].y
+                                                                         ))):
                 fingers_up.append(1)
             else:
                 fingers_up.append(0)
@@ -102,33 +105,49 @@ def process_image(frame):
     return frame
 
 
-def main():
-    init_gui()
-    cap = cv2.VideoCapture(0)
+@app.route('/')
+def index():
+    return render_template('index.html')
 
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(get_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+def get_frame():
     while True:
-
         ret, frame = cap.read()
         if flip_img:
             frame = process_image(cv2.flip(frame, 1))
         else:
             frame = process_image(frame)
 
-        # cv2.imshow('video feed', np.concatenate((frame, frame), axis=1))
-        cv2.imshow('video', frame)
+        # frame = np.concatenate((frame, frame), axis=1)
+        if show_window:
+            cv2.imshow('video', frame)
 
-        if cv2.waitKey(1) == ord('q'):
-            break
+            if cv2.waitKey(1) == ord('q'):
+                break
+
+        _, buffer = cv2.imencode('.jpg', frame)
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
     cap.release()
     cv2.destroyAllWindows()
 
 
+# sitting
 guis = [GUIs.Clock, GUIs.Paint]
 message = ''
 debug = True
 hand_on_gui = True
 flip_img = False
+show_window = True
+# end
+
+init_gui()
 
 if __name__ == '__main__':
-    main()
+    app.run(host='0.0.0.0', debug=True)
