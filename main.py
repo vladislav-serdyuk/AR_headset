@@ -115,6 +115,11 @@ def video_feed():
     return Response(get_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
+@app.route('/script.js')
+def script():
+    return render_template('script.js')
+
+
 def get_frame():
     while True:
         ret, frame = cap.read()
@@ -123,19 +128,19 @@ def get_frame():
         else:
             frame = process_image(frame)
 
-        # frame = np.concatenate((frame, frame), axis=1)
+        frame = np.concatenate((frame, frame), axis=1)
         if show_window:
             cv2.imshow('video', frame)
 
             if cv2.waitKey(1) == ord('q'):
-                break
+                cap.release()
+                cv2.destroyAllWindows()
+                quit()
 
         _, buffer = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
-    cap.release()
-    cv2.destroyAllWindows()
 
 
 # sitting
