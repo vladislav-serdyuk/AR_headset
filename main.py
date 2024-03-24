@@ -11,7 +11,7 @@ import GUIs
 segmentor = SelfiSegmentation()  # remove background
 hand_detector = HandDetector()
 app = Flask(__name__)  # server
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 inited_guis = []
 
@@ -101,6 +101,7 @@ def get_frame():
     """
     while True:
         ret, frame = cap.read()  # get frame from capture
+        # frame = cv2.rotate(frame, 1)
         if flip_img:
             frame = cv2.flip(frame, 1)
 
