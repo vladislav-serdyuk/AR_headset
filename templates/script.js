@@ -12,6 +12,6 @@ function enterFullScreen(element) {
 
 let btn = document.getElementById("full_screen");
 btn.addEventListener("click", function(){
-  let videoEle = document.querySelector('img');
+  let videoEle = document.querySelector('div');
   enterFullScreen(videoEle);
 });
