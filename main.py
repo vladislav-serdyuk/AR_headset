@@ -31,20 +31,18 @@ def draw_gui(img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], l
 
 def process_image(frame: np.ndarray) -> np.ndarray:
     copy_frame = frame.copy()
-    hands, frame = hand_detector.findHands(frame, draw=True, flipType=True)
+    hands, frame = hand_detector.findHands(frame, draw=debug, flipType=True)
     if hands:
         hand1 = hands[0]  # Get the first hand detected
         landmark = hand1["lmList"]  # List of 21 landmarks for the first hand
         bbox = hand1["bbox"]  # Bounding box around the first hand (x,y,w,h coordinates)
         fingers_up = hand_detector.fingersUp(hand1)
-        length, info, frame = hand_detector.findDistance(landmark[8][0:2], landmark[12][0:2], frame,
-                                                         color=(255, 0, 255), scale=10)
 
         fingers_touch = []
 
         for tip_id in [8, 12, 16, 20]:
-            length, info, frame = hand_detector.findDistance(landmark[4][0:2], landmark[tip_id][0:2], frame,
-                                                             color=(255, 0, 255), scale=10)
+            length, info, _ = hand_detector.findDistance(landmark[4][0:2], landmark[tip_id][0:2],
+                                                         (frame if debug else None), color=(255, 0, 255), scale=10)
             if length < 40:
                 fingers_touch.append(1)
             else:
