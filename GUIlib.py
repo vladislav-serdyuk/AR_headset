@@ -87,8 +87,6 @@ class WindowGUI(GUI):
                     , text_color)
         if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
                 and (self.y + y <= landmark[4][1] <= self.y + self.title_h + y + h)):
-            print('cls')
-            print(fingers_touch[0])
             action()
 
     def text(self, img, x, y, text, color, text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
