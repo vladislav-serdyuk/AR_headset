@@ -88,3 +88,7 @@ class WindowGUI(GUI):
             print('cls')
             print(fingers_touch[0])
             action()
+
+    def text(self, img, x, y, text, color, text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
+        cv2.putText(img, text, (self.x + x, self.y + y), text_fontFace, text_fontScale, color)
+        
