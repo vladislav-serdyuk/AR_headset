@@ -6,27 +6,12 @@ from cvzone.SelfiSegmentationModule import SelfiSegmentation
 from cvzone.HandTrackingModule import HandDetector
 from flask import Flask, render_template, Response
 
-import GUIs
+import GUI_render
 
 segmentor = SelfiSegmentation()  # remove background
 hand_detector = HandDetector()
 app = Flask(__name__)  # server
 cap = cv2.VideoCapture(0)
-
-inited_guis = []
-
-
-def init_gui():
-    for gui in guis:
-        inited_guis.append(gui())
-
-
-def draw_gui(img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]]):
-    for gui in inited_guis:
-        gui(img, fingers_up, fingers_touch, landmark)
-    if message:
-        h, w, c = img.shape
-        cv2.putText(img, message, (100, h // 2), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 3)
 
 
 def process_image(frame: np.ndarray) -> np.ndarray:
@@ -48,7 +33,7 @@ def process_image(frame: np.ndarray) -> np.ndarray:
             else:
                 fingers_touch.append(0)
 
-        draw_gui(frame, fingers_up, fingers_touch, landmark)
+        GUI_render.draw_gui(frame, fingers_up, fingers_touch, landmark)
 
         if hand_on_gui:
             min_x = bbox[0] - 40
@@ -72,7 +57,7 @@ def process_image(frame: np.ndarray) -> np.ndarray:
                 cx, cy, cz = lm
                 cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
     else:
-        draw_gui(frame, [0] * 5, [0] * 4, [(0, 0)] * 20)
+        GUI_render.draw_gui(frame, [0] * 5, [0] * 4, [(0, 0)] * 20)
 
     return frame
 
@@ -120,15 +105,13 @@ def get_frame():
 
 
 # sitting
-guis = [GUIs.Clock, GUIs.Paint]
-message = ''
 debug = True
 hand_on_gui = True
 flip_img = False
 show_window = True
 # end
 
-init_gui()
+GUI_render.init_gui()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
