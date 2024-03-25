@@ -79,4 +79,12 @@ class WindowGUI(GUI):
             cv2.line(img, (self.x + self.w, self.y),
                      (self.x + self.w, self.y + self.title_h), self.border_color, thickness=2)
 
-
+    def button(self, img, x, y, w, h, color, text, action, fingers_touch, landmark, text_color=(0, 0, 0),
+               text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
+        cv2.rectangle(img, (self.x + x, self.y + y), (self.x + x + w, self.y + y + h), color, -1)
+        cv2.putText(img, text, (self.x + x + 10, self.y + y + h - 10), text_fontFace, text_fontScale, text_color)
+        if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
+                and (self.y + y <= landmark[4][1] <= self.y + y + h)):
+            print('cls')
+            print(fingers_touch[0])
+            action()
