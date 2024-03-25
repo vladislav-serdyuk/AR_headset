@@ -24,7 +24,7 @@ class App(WindowGUI):
             else:
                 self.last_point = (-1, -1)
 
-            self.button(img, 0, self.title_h, 30, 30, (0, 0, 255), '', self.clean,
+            self.button(img, 0, 0, 30, 30, (0, 0, 255), '', self.clean,
                         fingers_touch, landmark)
             h, w, c = img.shape
             for i in range(self.win_w):
