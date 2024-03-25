@@ -1,11 +1,15 @@
+import json
+import importlib
+
 import cv2
 import numpy as np
-import pkg.clock.run
-import pkg.paint.run
 
 inited_guis = []
 message = ''
-guis = [pkg.clock.run, pkg.paint.run]
+
+with open('pkglist.json') as file:
+    guis = [importlib.import_module('pkg.' + pkg['dir'] + '.run')
+            for pkg in json.JSONDecoder().decode(file.read()).values()]
 
 
 def init_gui():
