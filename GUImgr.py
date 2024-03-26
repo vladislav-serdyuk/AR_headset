@@ -6,7 +6,7 @@ import numpy as np
 
 inited_guis = []
 message = ''
-buffer = ''
+buffer = []
 
 with open('pkglist.json') as file:
     guis = [importlib.import_module('pkg.' + pkg['dir'] + '.run')
