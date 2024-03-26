@@ -33,7 +33,7 @@ def process_image(frame: np.ndarray) -> np.ndarray:
             else:
                 fingers_touch.append(0)
 
-        GUI_render.draw_gui(frame, fingers_up, fingers_touch, landmark)
+        GUImgr.draw_gui(frame, fingers_up, fingers_touch, landmark)
 
         if hand_on_gui:
             min_x = bbox[0] - 40
@@ -57,23 +57,23 @@ def process_image(frame: np.ndarray) -> np.ndarray:
                 cx, cy, cz = lm
                 cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
     else:
-        GUI_render.draw_gui(frame, [0] * 5, [0] * 4, [(0, 0)] * 20)
+        GUImgr.draw_gui(frame, [0] * 5, [0] * 4, [(0, 0)] * 20)
 
     return frame
 
 
 @app.route('/')
-def index():
+def index() -> str:
     return render_template('index.html')
 
 
 @app.route('/video_feed')
-def video_feed():
+def video_feed() -> Response:
     return Response(get_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/script.js')
-def script():
+def script() -> str:
     return render_template('script.js')
 
 
