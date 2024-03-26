@@ -135,4 +135,21 @@ class WindowGUI(GUI):
 ```
 
 ### Создание пакета
-...
+Создайте:
+
+```
+folder
+|   pkg_data.json
+|
+\---files
+        run.py
+```
+
+pkg_data.json:
+```
+{
+  "name": "my_pkg",
+  "dir": "myPkg",
+  "info": "This is My Pkg"
+}
+```
