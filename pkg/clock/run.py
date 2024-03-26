@@ -16,7 +16,7 @@ class App(GUI):
         self.t_pre = 0
 
     def __call__(self, img, fingers_up, fingers_touch, landmark, buffer):
-        super().__call__(img, fingers_up, fingers_touch, landmark, buufer)
+        super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
         now = datetime.now()
         if fingers_touch[1] and (not self.t_pre) and self.x <= landmark[4][0] <= self.x + self.w \
                 and self.y <= landmark[4][1] <= self.y + self.h:
