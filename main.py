@@ -6,7 +6,7 @@ from cvzone.SelfiSegmentationModule import SelfiSegmentation
 from cvzone.HandTrackingModule import HandDetector
 from flask import Flask, render_template, Response
 
-import GUI_render
+import GUImgr
 
 segmentor = SelfiSegmentation()  # remove background
 hand_detector = HandDetector()
