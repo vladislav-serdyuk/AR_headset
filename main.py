@@ -111,7 +111,7 @@ flip_img = False
 show_window = True
 # end
 
-GUI_render.init_gui()
+GUImgr.init_gui()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
