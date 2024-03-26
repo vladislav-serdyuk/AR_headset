@@ -10,7 +10,7 @@ class GUI:
         self.y = 10
         self.track = False
 
-    def __call__(self, img, fingers_up, fingers_touch, landmark):  # track finger
+    def __call__(self, img, fingers_up, fingers_touch, landmark, buffer):  # track finger
         if self.track:
             self.x = landmark[8][0] - self.w // 2
             self.y = landmark[8][1] - self.h // 2
@@ -42,10 +42,10 @@ class WindowGUI(GUI):
         self.y = 200
         self.t_pre = 0
 
-    def __call__(self, img, fingers_up, fingers_touch, landmark):
+    def __call__(self, img, fingers_up, fingers_touch, landmark, buffer):
         self.h = self.title_h
         self.w = self.win_w - 50
-        super().__call__(img, fingers_up, fingers_touch, landmark)
+        super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
 
         if ((not self.t_pre) and self.x + self.w <= landmark[8][0] <= self.x + self.win_w
                 and self.y <= landmark[8][1] <= self.y + self.h):
@@ -90,7 +90,7 @@ class WindowGUI(GUI):
     def text(self, img, x, y, text, color, text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
         cv2.putText(img, text, (self.x + x, self.y + self.title_h + y), text_fontFace, text_fontScale, color)
 
-    def button(self, img, x, y, w, h, text, color,  action, fingers_touch, landmark, border_color=None,
+    def button(self, img, x, y, w, h, text, color, action, fingers_touch, landmark, border_color=None,
                text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
         self.rectangle(img, x, y, w, h, color, border_color)
         self.text(img, 10, y + h - 10, text, text_color,

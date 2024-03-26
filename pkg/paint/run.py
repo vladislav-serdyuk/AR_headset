@@ -13,8 +13,8 @@ class App(WindowGUI):
         self.art = np.zeros((self.win_w, self.win_h))
         self.last_point = (-1, -1)
 
-    def __call__(self, img, fingers_up, fingers_touch, landmark):
-        super().__call__(img, fingers_up, fingers_touch, landmark)
+    def __call__(self, img, fingers_up, fingers_touch, landmark, buffer):
+        super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
         if not self.hide:
             if (fingers_touch[0] and self.x <= landmark[8][0] <= self.x + self.win_w
                     and self.y + self.title_h <= landmark[8][1] <= self.y + self.win_h):
