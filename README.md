@@ -153,3 +153,4 @@ pkg_data.json:
   "info": "This is My Pkg"
 }
 ```
+Упакуйте в zip
