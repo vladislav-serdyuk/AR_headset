@@ -79,16 +79,26 @@ class WindowGUI(GUI):
             cv2.line(img, (self.x + self.w, self.y),
                      (self.x + self.w, self.y + self.title_h), self.border_color, thickness=2)
 
-    def button(self, img, x, y, w, h, color, text, action, fingers_touch, landmark, text_color=(0, 0, 0),
-               text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
+    def rectangle(self, img, x, y, w, h, color, border_color=None):
         cv2.rectangle(img, (self.x + x, self.y + self.title_h + y), (self.x + x + w, self.y + self.title_h + y + h),
                       color, -1)
-        cv2.putText(img, text, (self.x + x + 10, self.y + self.title_h + y + h - 10), text_fontFace, text_fontScale
-                    , text_color)
-        if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
-                and (self.y + y <= landmark[4][1] <= self.y + self.title_h + y + h)):
-            action()
+        if border_color is not None:
+            cv2.rectangle(img, (self.x + x, self.y + self.title_h + y), (self.x + x + w, self.y + self.title_h + y + h),
+                          border_color, 1)
 
     def text(self, img, x, y, text, color, text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
         cv2.putText(img, text, (self.x + x, self.y + self.title_h + y), text_fontFace, text_fontScale, color)
 
+    def button(self, img, x, y, w, h, text, color,  action, fingers_touch, landmark, border_color=None,
+               text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
+        self.rectangle(img, x, y, w, h, color, border_color)
+        self.text(img, 10, y + h - 10, text, text_color,
+                  text_fontFace=text_fontFace, text_fontScale=text_fontScale)
+        if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
+                and (self.y + y <= landmark[4][1] <= self.y + self.title_h + y + h)):
+            action()
+
+    @staticmethod
+    def add_img(img, x, y, img2):
+        h, w, c = img2.shape
+        img[x:x + w, y:y + h] = img2
