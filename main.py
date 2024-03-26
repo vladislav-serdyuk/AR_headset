@@ -104,7 +104,7 @@ def get_frame():
                b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
 
-# sitting
+# setting
 debug = True
 hand_on_gui = True
 flip_img = False
