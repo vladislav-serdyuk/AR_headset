@@ -27,6 +27,7 @@ class WindowGUI(GUI):
     def __init__(self):
         super().__init__()
         self.hide = True
+        self.pressed_button = False
         self.background_color = (255, 255, 255)
         self.border_color = (0, 0, 0)
         self.border_thickness = 2
@@ -96,7 +97,11 @@ class WindowGUI(GUI):
                   text_fontFace=text_fontFace, text_fontScale=text_fontScale)
         if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
                 and (self.y + y <= landmark[4][1] <= self.y + self.title_h + y + h)):
-            action()
+            if not self.pressed_button:
+                action()
+                self.pressed_button = True
+        else:
+            self.pressed_button = False
 
     @staticmethod
     def add_img(img, x, y, img2):
