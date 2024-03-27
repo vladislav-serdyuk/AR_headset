@@ -96,11 +96,11 @@ class WindowGUI(GUI):
         self.text(img, x + 10, y + h - 10, text, text_color,
                   text_fontFace=text_fontFace, text_fontScale=text_fontScale)
         if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
-                and (self.y + y <= landmark[4][1] <= self.y + self.title_h + y + h)):
+                and (self.y + self.title_h + y <= landmark[4][1] <= self.y + self.title_h + y + h)):
             if not self.pressed_button:
-                action()
                 self.pressed_button = True
-        else:
+                action()
+        elif not fingers_touch[0]:
             self.pressed_button = False
 
     @staticmethod
