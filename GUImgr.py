@@ -29,6 +29,8 @@ def draw_gui(img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], l
             err += 1
     if err:
         message = f'In {err} apps error'
+    else:
+        update_msg()
     if message:
         h, w, c = img.shape
         cv2.putText(img, message, (100, h // 2), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 3)
@@ -36,4 +38,4 @@ def draw_gui(img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], l
 
 def update_msg():
     global message
-    pass
+    message = ''
