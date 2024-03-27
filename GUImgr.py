@@ -19,8 +19,21 @@ def init_gui():
 
 
 def draw_gui(img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]]):
+    global message
+    err = 0
     for gui in inited_guis:
-        gui(img, fingers_up, fingers_touch, landmark, buffer)
+        # noinspection PyBroadException
+        try:
+            gui(img, fingers_up, fingers_touch, landmark, buffer)
+        except Exception:
+            err += 1
+    if err:
+        message = f'In {err} apps error'
     if message:
         h, w, c = img.shape
         cv2.putText(img, message, (100, h // 2), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 3)
+
+
+def update_msg():
+    global message
+    pass
