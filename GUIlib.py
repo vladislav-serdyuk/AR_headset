@@ -93,7 +93,7 @@ class WindowGUI(GUI):
     def button(self, img, x, y, w, h, text, color, action, fingers_touch, landmark, border_color=None,
                text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
         self.rectangle(img, x, y, w, h, color, border_color)
-        self.text(img, 10, y + h - 10, text, text_color,
+        self.text(img, x + 10, y + h - 10, text, text_color,
                   text_fontFace=text_fontFace, text_fontScale=text_fontScale)
         if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
                 and (self.y + y <= landmark[4][1] <= self.y + self.title_h + y + h)):
