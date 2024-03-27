@@ -106,4 +106,4 @@ class WindowGUI(GUI):
     @staticmethod
     def add_img(img, x, y, img2):
         h, w, c = img2.shape
-        img[x:x + w, y:y + h] = img2
+        img[y:y + h, x:x + w] = img2
