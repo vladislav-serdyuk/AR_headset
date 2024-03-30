@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-
+track = False
 class GUI:
     def __init__(self):  # setup position
         self.h = 50
@@ -11,16 +11,21 @@ class GUI:
         self.track = False
 
     def __call__(self, img, fingers_up, fingers_touch, landmark, buffer):  # track finger
+        global track
+        if landmark[0] == (0, 0):
+            return
         if self.track:
             self.x = landmark[8][0] - self.w // 2
             self.y = landmark[8][1] - self.h // 2
-        if fingers_up[:] == [0, 1, 0, 0, 0] and self.x <= landmark[8][0] <= self.x + self.w \
-                and self.y <= landmark[8][1] <= self.y + self.h:
+        if fingers_touch[0] == 1 and self.x <= landmark[8][0] <= self.x + self.w \
+                and self.y <= landmark[8][1] <= self.y + self.h and not track:
             self.track = True
+            track = True
             self.x = landmark[8][0] - self.w // 2
             self.y = landmark[8][1] - self.h // 2
-        if fingers_touch[0] and self.track:
+        if fingers_touch[0] == 0 and self.track:
             self.track = False
+            track = False
 
 
 class WindowGUI(GUI):
