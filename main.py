@@ -28,7 +28,7 @@ def process_image(frame: np.ndarray) -> np.ndarray:
         for tip_id in [8, 12, 16, 20]:
             length, info, _ = hand_detector.findDistance(landmark[4][0:2], landmark[tip_id][0:2],
                                                          (frame if debug else None), color=(255, 0, 255), scale=10)
-            if length < 40:
+            if length < 32:
                 fingers_touch.append(1)
             else:
                 fingers_touch.append(0)
@@ -89,6 +89,9 @@ def get_frame():
             frame = cv2.flip(frame, 1)
 
         frame = process_image(frame)
+        h, w, c = frame.shape
+        border = np.zeros((h, int(w*0.3), c))
+        frame = np.concatenate((border, frame, border), axis=1)
 
         frame = np.concatenate((frame, frame), axis=1)
         if show_window:
