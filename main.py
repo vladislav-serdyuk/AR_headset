@@ -90,7 +90,7 @@ def get_frame():
 
         frame = process_image(frame)
         h, w, c = frame.shape
-        border = np.zeros((h, int(w*0.3), c))
+        border = np.zeros((h, int(w*0.3), c), dtype=np.uint8)
         frame = np.concatenate((border, frame, border), axis=1)
 
         frame = np.concatenate((frame, frame), axis=1)
