@@ -74,19 +74,29 @@ class WindowGUI(GUI):
             self.rectangle(img, self.w + 15, -self.title_h // 2, 20, 2, (0, 0, 0))
 
     def rectangle(self, img, x, y, w, h, color, border_color=None):
-        cv2.rectangle(img, (self.x + x, self.y + self.title_h + y), (self.x + x + w, self.y + self.title_h + y + h),
+        overlay = img.copy()
+        cv2.rectangle(overlay, (self.x + x, self.y + self.title_h + y), (self.x + x + w, self.y + self.title_h + y + h),
                       color, -1)
         if border_color is not None:
-            cv2.rectangle(img, (self.x + x, self.y + self.title_h + y), (self.x + x + w, self.y + self.title_h + y + h),
+            cv2.rectangle(overlay, (self.x + x, self.y + self.title_h + y),
+                          (self.x + x + w, self.y + self.title_h + y + h),
                           border_color, 1)
+        alpha = 0.8
+        new_img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
+        img[:][:] = new_img
 
     def text(self, img, x, y, text, color, text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
-        cv2.putText(img, text, (self.x + x, self.y + self.title_h + y), text_fontFace, text_fontScale, color)
+        overlay = img.copy()
+        cv2.putText(overlay, text, (self.x + x, self.y + self.title_h + y), text_fontFace, text_fontScale, color)
+        alpha = 0.9
+        new_img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
+        img[:][:] = new_img
 
     def button(self, img, x, y, w, h, text, color, action, fingers_touch, landmark, border_color=None,
                text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
-        self.rectangle(img, x, y, w, h, color, border_color)
-        self.text(img, x + 10, y + h - 10, text, text_color,
+        overlay = img.copy()
+        self.rectangle(overlay, x, y, w, h, color, border_color)
+        self.text(overlay, x + 10, y + h - 10, text, text_color,
                   text_fontFace=text_fontFace, text_fontScale=text_fontScale)
         if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
                 and (self.y + self.title_h + y <= landmark[4][1] <= self.y + self.title_h + y + h)):
@@ -95,6 +105,9 @@ class WindowGUI(GUI):
                 action()
         elif not fingers_touch[0]:
             self.pressed_button = False
+        alpha = 0.95
+        new_img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
+        img[:][:] = new_img
 
     def add_img(self, img, x, y, img2):
         h, w, c = img2.shape
