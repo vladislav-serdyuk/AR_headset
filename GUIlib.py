@@ -73,14 +73,42 @@ class WindowGUI(GUI):
             self.text(img, 10, -10, self.name, self.title_color)
             self.rectangle(img, self.w + 15, -self.title_h // 2, 20, 2, (0, 0, 0))
 
-    def rectangle(self, img, x, y, w, h, color, border_color=None):
+    def rectangle(self, img, x, y, w, h, color, radius=1, thickness=-1, line_type=cv2.LINE_AA):
         overlay = img.copy()
-        cv2.rectangle(overlay, (self.x + x, self.y + self.title_h + y), (self.x + x + w, self.y + self.title_h + y + h),
-                      color, -1)
-        if border_color is not None:
-            cv2.rectangle(overlay, (self.x + x, self.y + self.title_h + y),
-                          (self.x + x + w, self.y + self.title_h + y + h),
-                          border_color, 1)
+
+        #  corners:
+        #  p1 - p2
+        #  |     |
+        #  p4 - p3
+
+        topLeft = (self.x + x, self.y + self.title_h + y)
+        bottomRight = (self.x + x + w, self.y + self.title_h + y + h)
+        p1 = topLeft
+        p2 = (bottomRight[0], topLeft[1])
+        p3 = bottomRight
+        p4 = (topLeft[0], bottomRight[1])
+
+        if thickness < 0:
+            # // draw rectangle
+            cv2.rectangle(overlay, (p1[0] + radius, p1[1]), (p3[0] - radius, p3[1]), color, thickness, line_type)
+            cv2.rectangle(overlay, (p1[0], p1[1] + radius), (p3[0], p3[1] - radius), color, thickness, line_type)
+        else:
+            # // draw straight lines
+            cv2.line(overlay, (p1[0] + radius, p1[1]), (p2[0] - radius, p2[1]), color, thickness, line_type)
+            cv2.line(overlay, (p2[0], p2[1] + radius), (p3[0], p3[1] - radius), color, thickness, line_type)
+            cv2.line(overlay, (p4[0] + radius, p4[1]), (p3[0] - radius, p3[1]), color, thickness, line_type)
+            cv2.line(overlay, (p1[0], p1[1] + radius), (p4[0], p4[1] - radius), color, thickness, line_type)
+
+        # // draw arcs
+        if radius > 0:
+            cv2.ellipse(overlay, (p1[0] + radius, p1[1] + radius), (radius, radius), 180.0, 0, 90, color, thickness,
+                        line_type)
+            cv2.ellipse(overlay, (p2[0] - radius, p2[1] + radius), (radius, radius), 270.0, 0, 90, color, thickness,
+                        line_type)
+            cv2.ellipse(overlay, (p3[0] - radius, p3[1] - radius), (radius, radius), 0.0, 0, 90, color, thickness,
+                        line_type)
+            cv2.ellipse(overlay, (p4[0] + radius, p4[1] - radius), (radius, radius), 90.0, 0, 90, color, thickness,
+                        line_type)
         alpha = 0.8
         new_img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
         img[:][:] = new_img
@@ -92,10 +120,10 @@ class WindowGUI(GUI):
         new_img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
         img[:][:] = new_img
 
-    def button(self, img, x, y, w, h, text, color, action, fingers_touch, landmark, border_color=None,
+    def button(self, img, x, y, w, h, text, color, action, fingers_touch, landmark,
                text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
         overlay = img.copy()
-        self.rectangle(overlay, x, y, w, h, color, border_color)
+        self.rectangle(overlay, x, y, w, h, color)
         self.text(overlay, x + 10, y + h - 10, text, text_color,
                   text_fontFace=text_fontFace, text_fontScale=text_fontScale)
         if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
