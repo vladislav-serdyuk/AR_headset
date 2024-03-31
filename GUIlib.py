@@ -1,7 +1,10 @@
 import cv2
 import numpy as np
+import PIL
 
 track = False
+
+
 class GUI:
     def __init__(self):  # setup position
         self.h = 50
@@ -35,7 +38,6 @@ class WindowGUI(GUI):
         self.pressed_button = False
         self.background_color = (255, 255, 255)
         self.border_color = (0, 0, 0)
-        self.border_thickness = 2
         self.name = 'window'
         self.title_h = 30
         self.title_color = (0, 0, 0)
@@ -61,29 +63,15 @@ class WindowGUI(GUI):
             self.t_pre = 0
 
         if self.hide:
-            cv2.rectangle(img, (self.x, self.y), (self.x + self.win_w, self.y + self.h),
-                          self.background_color, cv2.FILLED)
-            cv2.rectangle(img, (self.x, self.y), (self.x + self.win_w, self.y + self.h),
-                          self.border_color, self.border_thickness)
-            cv2.putText(img, self.name, (self.x + 10, self.y + self.title_h - 10),
-                        cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, self.title_color, 1)
-            cv2.line(img, (self.x + self.w + 35, self.y + self.title_h // 2),
-                     (self.x + self.w + 15, self.y + self.title_h // 2), self.border_color, thickness=2)
-            cv2.line(img, (self.x + self.w, self.y),
-                     (self.x + self.w, self.y + self.title_h), self.border_color, thickness=2)
+            self.rectangle(img, 0, -self.title_h, self.win_w, self.h, self.background_color)
+            self.text(img, 10, - 10, self.name, self.title_color)
+            self.rectangle(img, self.w + 15, -self.title_h // 2, 20, 2, (0, 0, 0))
+
         else:
-            cv2.rectangle(img, (self.x, self.y), (self.x + self.win_w, self.y + self.win_h),
-                          self.background_color, cv2.FILLED)
-            cv2.rectangle(img, (self.x, self.y), (self.x + self.win_w, self.y + self.win_h),
-                          self.border_color, self.border_thickness)
-            cv2.line(img, (self.x, self.y + self.title_h), (self.x + self.win_w, self.y + self.title_h),
-                     self.border_color, self.border_thickness)
-            cv2.putText(img, self.name, (self.x + 10, self.y + self.title_h - 10),
-                        cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, self.title_color, 1)
-            cv2.line(img, (self.x + self.w + 35, self.y + self.title_h // 2),
-                     (self.x + self.w + 15, self.y + self.title_h // 2), self.border_color, thickness=2)
-            cv2.line(img, (self.x + self.w, self.y),
-                     (self.x + self.w, self.y + self.title_h), self.border_color, thickness=2)
+            self.rectangle(img, 0, -self.title_h, self.win_w, self.win_h, self.background_color)
+            self.rectangle(img, 0, 0, self.win_w, self.win_h, self.background_color)
+            self.text(img, 10, -10, self.name, self.title_color)
+            self.rectangle(img, self.w + 15, -self.title_h // 2, 20, 2, (0, 0, 0))
 
     def rectangle(self, img, x, y, w, h, color, border_color=None):
         cv2.rectangle(img, (self.x + x, self.y + self.title_h + y), (self.x + x + w, self.y + self.title_h + y + h),
