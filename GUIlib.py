@@ -96,7 +96,6 @@ class WindowGUI(GUI):
         elif not fingers_touch[0]:
             self.pressed_button = False
 
-    @staticmethod
-    def add_img(img, x, y, img2):
+    def add_img(self, img, x, y, img2):
         h, w, c = img2.shape
-        img[y:y + h, x:x + w] = img2
+        img[self.y + self.title_h + y:self.y + self.title_h + y + h, self.x + x:self.x + x + w] = img2
