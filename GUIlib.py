@@ -65,15 +65,17 @@ class WindowGUI(GUI):
         if self.hide:
             self.rectangle(img, 0, -self.title_h, self.win_w, self.h, self.background_color)
             self.text(img, 10, - 10, self.name, self.title_color)
-            self.rectangle(img, self.w + 15, -self.title_h // 2, 20, 2, (0, 0, 0))
+            cv2.line(img, (self.x + self.w + 15, self.y + self.title_h // 2),
+                     (self.x + self.w + 35, self.y + self.title_h // 2), (0, 0, 0), 2)
 
         else:
             self.rectangle(img, 0, -self.title_h, self.win_w, self.win_h, self.background_color)
             self.rectangle(img, 0, 0, self.win_w, self.win_h, self.background_color)
             self.text(img, 10, -10, self.name, self.title_color)
-            self.rectangle(img, self.w + 15, -self.title_h // 2, 20, 2, (0, 0, 0))
+            cv2.line(img, (self.x + self.w + 15, self.y + self.title_h // 2),
+                     (self.x + self.w + 35, self.y + self.title_h // 2), (0, 0, 0), 2)
 
-    def rectangle(self, img, x, y, w, h, color, radius=1, thickness=-1, line_type=cv2.LINE_AA):
+    def rectangle(self, img, x, y, w, h, color, radius=10, thickness=-1, line_type=cv2.LINE_AA):
         overlay = img.copy()
 
         #  corners:
@@ -122,9 +124,8 @@ class WindowGUI(GUI):
 
     def button(self, img, x, y, w, h, text, color, action, fingers_touch, landmark,
                text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
-        overlay = img.copy()
-        self.rectangle(overlay, x, y, w, h, color)
-        self.text(overlay, x + 10, y + h - 10, text, text_color,
+        self.rectangle(img, x, y, w, h, color)
+        self.text(img, x + 10, y + h - 10, text, text_color,
                   text_fontFace=text_fontFace, text_fontScale=text_fontScale)
         if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
                 and (self.y + self.title_h + y <= landmark[4][1] <= self.y + self.title_h + y + h)):
@@ -133,9 +134,6 @@ class WindowGUI(GUI):
                 action()
         elif not fingers_touch[0]:
             self.pressed_button = False
-        alpha = 0.95
-        new_img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
-        img[:][:] = new_img
 
     def add_img(self, img, x, y, img2):
         h, w, c = img2.shape
