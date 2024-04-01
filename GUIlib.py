@@ -115,14 +115,14 @@ class WindowGUI(GUI):
                         line_type)
             cv2.ellipse(overlay, (p4[0] + radius, p4[1] - radius), (radius, radius), 90.0, 0, 90, color, thickness,
                         line_type)
-        alpha = 0.8
+        alpha = 0.6
         new_img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
         img[:][:] = new_img
 
     def text(self, img, x, y, text, color, text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
         overlay = img.copy()
         cv2.putText(overlay, text, (self.x + x, self.y - self.win_h + y), text_fontFace, text_fontScale, color)
-        alpha = 0.9
+        alpha = 0.8
         new_img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
         img[:][:] = new_img
 
