@@ -63,15 +63,15 @@ class WindowGUI(GUI):
             self.t_pre = 0
 
         if self.hide:
-            self.rectangle(img, 0, -self.title_h, self.win_w, self.h, self.background_color)
-            self.text(img, 10, - 10, self.name, self.title_color)
+            self.rectangle(img, 0, self.win_h, self.win_w, self.h, self.background_color)
+            self.text(img, 10, self.win_h + self.title_h - 10, self.name, self.title_color)
             cv2.line(img, (self.x + self.w + 15, self.y + self.title_h // 2),
                      (self.x + self.w + 35, self.y + self.title_h // 2), (0, 0, 0), 2)
 
         else:
-            self.rectangle(img, 0, -self.title_h, self.win_w, self.win_h, self.background_color)
+            self.rectangle(img, 0, 0, self.win_w, self.win_h + self.title_h, self.background_color)
             self.rectangle(img, 0, 0, self.win_w, self.win_h, self.background_color)
-            self.text(img, 10, -10, self.name, self.title_color)
+            self.text(img, 10, self.win_h + self.title_h - 10, self.name, self.title_color)
             cv2.line(img, (self.x + self.w + 15, self.y + self.title_h // 2),
                      (self.x + self.w + 35, self.y + self.title_h // 2), (0, 0, 0), 2)
 
@@ -83,8 +83,8 @@ class WindowGUI(GUI):
         #  |     |
         #  p4 - p3
 
-        topLeft = (self.x + x, self.y + self.title_h + y)
-        bottomRight = (self.x + x + w, self.y + self.title_h + y + h)
+        topLeft = (self.x + x, self.y - self.win_h + y)
+        bottomRight = (self.x + x + w, self.y - self.win_h + y + h)
         p1 = topLeft
         p2 = (bottomRight[0], topLeft[1])
         p3 = bottomRight
@@ -117,7 +117,7 @@ class WindowGUI(GUI):
 
     def text(self, img, x, y, text, color, text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
         overlay = img.copy()
-        cv2.putText(overlay, text, (self.x + x, self.y + self.title_h + y), text_fontFace, text_fontScale, color)
+        cv2.putText(overlay, text, (self.x + x, self.y - self.win_h + y), text_fontFace, text_fontScale, color)
         alpha = 0.9
         new_img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
         img[:][:] = new_img
@@ -128,7 +128,7 @@ class WindowGUI(GUI):
         self.text(img, x + 10, y + h - 10, text, text_color,
                   text_fontFace=text_fontFace, text_fontScale=text_fontScale)
         if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
-                and (self.y + self.title_h + y <= landmark[4][1] <= self.y + self.title_h + y + h)):
+                and (self.y - self.win_h + y <= landmark[4][1] <= self.y - self.win_h + y + h)):
             if not self.pressed_button:
                 self.pressed_button = True
                 action()
@@ -137,4 +137,4 @@ class WindowGUI(GUI):
 
     def add_img(self, img, x, y, img2):
         h, w, c = img2.shape
-        img[self.y + self.title_h + y:self.y + self.title_h + y + h, self.x + x:self.x + x + w] = img2
+        img[self.y - self.win_h + y:self.y - self.win_h + y + h, self.x + x:self.x + x + w] = img2
