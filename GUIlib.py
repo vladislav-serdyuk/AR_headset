@@ -12,20 +12,24 @@ class GUI:
         self.x = 10
         self.y = 10
         self.track = False
+        self.track_x = 0
+        self.track_y = 0
 
     def __call__(self, img, fingers_up, fingers_touch, landmark, buffer):  # track finger
         global track
         if landmark[0] == (0, 0):
             return
         if self.track:
-            self.x = landmark[8][0] - self.w // 2
-            self.y = landmark[8][1] - self.h // 2
+            self.x = landmark[8][0] - self.track_x
+            self.y = landmark[8][1] - self.track_y
         if fingers_touch[0] == 1 and self.x <= landmark[8][0] <= self.x + self.w \
                 and self.y <= landmark[8][1] <= self.y + self.h and not track:
+            self.track_x = landmark[8][0] - self.x
+            self.track_y = landmark[8][1] - self.y
             self.track = True
             track = True
-            self.x = landmark[8][0] - self.w // 2
-            self.y = landmark[8][1] - self.h // 2
+            self.x = landmark[8][0] - self.track_x
+            self.y = landmark[8][1] - self.track_y
         if fingers_touch[0] == 0 and self.track:
             self.track = False
             track = False
