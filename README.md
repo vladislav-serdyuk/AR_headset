@@ -40,12 +40,19 @@ i - install, d - delete, q - quit
 ## Для Разрабов
 ### Архетиктура
 main.py: оснавной файл
+
 GUIlib.py: Библиотека GUI
+
 GUImgr.py: инициализация пакетов и отрисовка
-pkglist.json: хранит мета данные пакетов
+
+pkglist.json: хранит данные пакетов
+
 templates/index.html: страница трансляции
+
 templates/script.js: скрипт
+
 pkg/pkg_name/: папка пакета pkg_name
+
 pkg/pkg_name/run.py: главный файл пакета pkg_name
 
 #### Структура pkglist.json
