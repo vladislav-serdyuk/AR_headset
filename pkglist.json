@@ -3,5 +3,6 @@
   "paint": {"dir": "paint"},
   "keyboard": {"dir": "keyboard", "info": "Keyboard"},
   "calc": {"dir": "calc", "info": "Calculator"},
-  "timer": {"dir": "timer", "info":  "Timer"}
+  "timer": {"dir": "timer", "info":  "Timer"},
+  "audio_player": {"dir":  "audioplayer", "info": "Audio player"}
 }
