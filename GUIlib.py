@@ -52,7 +52,7 @@ class WindowGUI(GUI):
         self.x = 200
         self.y = 200
         self.t_pre = 0
-        self.hide_w = 100
+        self.hide_w = 130
 
     def __call__(self, img, fingers_up, fingers_touch, landmark, buffer):
         self.h = self.title_h
