@@ -50,7 +50,7 @@ class App(WindowGUI):
             return
         self.is_play = True
         data, fs = sf.read('audio/' + self.select)
-        sd.play(data, fs)
+        sd.play(data, fs, loop=True)
 
     def stop(self):
         sd.stop()
