@@ -52,22 +52,26 @@ class WindowGUI(GUI):
         self.x = 200
         self.y = 200
         self.t_pre = 0
+        self.hide_w = 100
 
     def __call__(self, img, fingers_up, fingers_touch, landmark, buffer):
         self.h = self.title_h
-        self.w = self.win_w - 50
+        if self.hide:
+            self.w = self.hide_w
+        else:
+            self.w = self.win_w - 50
         super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
 
-        if ((not self.t_pre) and self.x + self.w <= landmark[8][0] <= self.x + self.win_w
-                and self.y <= landmark[8][1] <= self.y + self.h):
+        if ((not self.t_pre) and self.x + self.w <= landmark[8][0] <= self.x + self.w + 50
+                and self.y <= landmark[8][1] <= self.y + self.h) and fingers_touch[0] and not track:
             self.t_pre = 1
             self.hide = not self.hide
-        elif ((not (self.x + self.w <= landmark[8][0] <= self.x + self.win_w
-                    and self.y <= landmark[8][1] <= self.y + self.h)) and self.t_pre):
+        elif ((not (self.x + self.w <= landmark[8][0] <= self.x + self.w + 50
+                    and self.y <= landmark[8][1] <= self.y + self.h)) or not fingers_touch[0]) and self.t_pre:
             self.t_pre = 0
 
         if self.hide:
-            self.rectangle(img, 0, self.win_h, self.win_w, self.h, self.background_color)
+            self.rectangle(img, 0, self.win_h, self.hide_w + 50, self.h, self.background_color)
             self.text(img, 10, self.win_h + self.title_h - 10, self.name, self.title_color)
             cv2.line(img, (self.x + self.w + 15, self.y + self.title_h // 2),
                      (self.x + self.w + 35, self.y + self.title_h // 2), (0, 0, 0), 2)
