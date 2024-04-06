@@ -144,5 +144,6 @@ class WindowGUI(GUI):
             self.pressed_button = False
 
     def add_img(self, img, x, y, img2):
-        h, w, c = img2.shape
-        img[self.y - self.win_h + y:self.y - self.win_h + y + h, self.x + x:self.x + x + w] = img2
+        h1, w1, c1 = img.shape
+        h2, w2, c2 = img2.shape
+        img[self.y - self.win_h + y:self.y - self.win_h + y + h2, self.x + x:self.x + x + w2] = img2[max(0, -x):max(0, -y), min(w2, w1 - x)):min(h2, h1 - y)]
