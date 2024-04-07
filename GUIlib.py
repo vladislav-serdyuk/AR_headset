@@ -3,10 +3,12 @@ import numpy as np
 import PIL
 
 track = False
+index = 0
 
 
 class GUI:
     def __init__(self):  # setup position
+        global index
         self.h = 50
         self.w = 50
         self.x = 10
@@ -14,6 +16,8 @@ class GUI:
         self.track = False
         self.track_x = 0
         self.track_y = 0
+        self.index = index
+        index += 1
 
     def __call__(self, img, fingers_up, fingers_touch, landmark, buffer):  # track finger
         global track
