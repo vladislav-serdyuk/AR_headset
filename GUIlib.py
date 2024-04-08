@@ -3,12 +3,11 @@ import numpy as np
 import PIL
 
 track = False
-index = 0
+# index = 0
 
 
 class GUI:
     def __init__(self):  # setup position
-        global index
         self.h = 50
         self.w = 50
         self.x = 10
@@ -16,8 +15,6 @@ class GUI:
         self.track = False
         self.track_x = 0
         self.track_y = 0
-        self.index = index
-        index += 1
 
     def __call__(self, img, fingers_up, fingers_touch, landmark, buffer):  # track finger
         global track
@@ -42,6 +39,9 @@ class GUI:
 class WindowGUI(GUI):
     def __init__(self):
         super().__init__()
+        # global index
+        # self.index = index
+        # index += 1
         self.hide = True
         self.pressed_button = False
         self.background_color = (255, 255, 255)
@@ -150,4 +150,5 @@ class WindowGUI(GUI):
     def add_img(self, img, x, y, img2):
         h1, w1, c1 = img.shape
         h2, w2, c2 = img2.shape
-        img[self.y - self.win_h + y:self.y - self.win_h + y + h2, self.x + x:self.x + x + w2] = img2[max(0, -y):min(h2, h1 - y), max(0, -x):min(w2, w1 - x)]
+        img[self.y - self.win_h + y:self.y - self.win_h + y + h2, self.x + x:self.x + x + w2]\
+            = img2[max(0, -y):min(h2, h1 - y), max(0, -x):min(w2, w1 - x)]
