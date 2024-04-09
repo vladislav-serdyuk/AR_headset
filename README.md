@@ -1,4 +1,5 @@
 # AR_headset
+![img](https://github.com/vladislav-serdyuk/AR_headset/blob/main/docs/GUI_exemple.png)
 ## Важно
 Библиотека opencv-python ver: 4.9.0.80 имеет дыру безопасности (CVE-2019-9423)
 ## Для пользователей
