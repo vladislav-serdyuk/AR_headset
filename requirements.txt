@@ -3,6 +3,5 @@ numpy~=1.26.4
 cvzone~=1.6.1
 Flask~=3.0.2
 mediapipe~=0.10.11
-pillow~=10.2.0
 sounddevice~=0.4.6
 soundfile~=0.12.1
