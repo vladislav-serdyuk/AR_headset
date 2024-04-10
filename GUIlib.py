@@ -15,7 +15,8 @@ class GUI:
         self.track_x = 0
         self.track_y = 0
 
-    def __call__(self, img, fingers_up, fingers_touch, landmark, buffer):  # track finger
+    def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
+                 buffer: list[str]):  # track finger
         global track
         if landmark[0] == (0, 0):
             return
@@ -55,7 +56,8 @@ class WindowGUI(GUI):
         self.t_pre = 0
         self.hide_w = 130
 
-    def __call__(self, img, fingers_up, fingers_touch, landmark, buffer):
+    def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
+                 buffer: list[str]):
         self.h = self.title_h
         if self.hide:
             self.w = self.hide_w
