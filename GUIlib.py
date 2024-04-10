@@ -42,7 +42,6 @@ class WindowGUI(GUI):
         self.hide = True
         self.pressed_button = False
         self.background_color = (255, 255, 255)
-        self.border_color = (0, 0, 0)
         self.name = 'window'
         self.title_h = 30
         self.title_color = (0, 0, 0)
