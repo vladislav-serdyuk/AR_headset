@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
-# import PIL
 
 track = False
+pos_index = 0
 
 
 class GUI:
@@ -38,6 +38,7 @@ class GUI:
 class WindowGUI(GUI):
     def __init__(self):
         super().__init__()
+        global pos_index
         self.hide = True
         self.pressed_button = False
         self.background_color = (255, 255, 255)
@@ -50,7 +51,8 @@ class WindowGUI(GUI):
         self.h = self.title_h
         self.w = self.win_w - 50
         self.x = 450
-        self.y = 200
+        self.y = 15 + pos_index * 40
+        pos_index += 1
         self.t_pre = 0
         self.hide_w = 130
 
