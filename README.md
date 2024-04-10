@@ -5,15 +5,17 @@
 ## Для пользователей
 ### Настройка
 - Установите зависимости (pip install -r requirements.txt)
-- Измените templates/index.html | div > img > width под экран
+- Измените templates/index.html | div > img > width так, чтобы растояние между картинками была равна 6см
 
 ### Использавание
 #### Часы
 Вытените указ. палец в часы часть, чтобы передвинуть
+
 Зажмите большой с средним, чтобы изменить тип
 
 #### Окна
 Зажмите большой с указательным, чтобы передвигать
+
 Зажмите большой с указательным, чтобы свернуть
 
 #### Кнопки
@@ -21,10 +23,12 @@
 
 #### Paint
 Зажмите большой с указательным, чтобы рисовать
+
 Зажмите большой с указательным в краном квадрате, чтобы стиреть
 
 #### Timer
 h = часы
+
 m = минуты
 
 #### Пакеты
@@ -32,10 +36,11 @@ m = минуты
 
 Сначала введите
 i - install, d - delete, q - quit
+
 Потом Имя файла/Имя пакета
 
 ## Для Разрабов
-### Архетиктура
+### Назачение файлов
 main.py: оснавной файл
 
 GUIlib.py: Библиотека GUI
@@ -119,7 +124,8 @@ class GUI:
         self.y = 10
         self.track = False
 
-    def __call__(self, img, fingers_up, fingers_touch, landmark): ...  # track finger
+    def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
+                 buffer: list[str]): ...  # track finger
 
 
 class WindowGUI(GUI):
@@ -140,7 +146,8 @@ class WindowGUI(GUI):
         self.y = 200
         self.t_pre = 0
 
-    def __call__(self, img, fingers_up, fingers_touch, landmark, buffer): ...
+    def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
+                 buffer: list[str]): ...
 
     def rectangle(self, img, x, y, w, h, color, radius=10, thickness=-1, line_type=cv2.LINE_AA): ...
 
