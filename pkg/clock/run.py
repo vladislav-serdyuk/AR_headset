@@ -12,6 +12,8 @@ class App(GUI):
         super().__init__()
         self.x = 10
         self.y = 10
+        self.h = 50
+        self.w = 50
         self.dig = False
         self.t_pre = 0
 

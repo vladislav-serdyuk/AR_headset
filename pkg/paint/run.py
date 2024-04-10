@@ -9,7 +9,6 @@ class App(WindowGUI):
         super().__init__()
         self.win_h = 300
         self.win_w = 300
-        self.y = 180
         self.name = 'Paint'
         self.art = np.zeros((self.win_w, self.win_h))
         self.last_point = (-1, -1)

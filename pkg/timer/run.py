@@ -12,7 +12,6 @@ from GUIlib import WindowGUI
 class App(WindowGUI):
     def __init__(self):
         super().__init__()
-        self.y = 100
         self.win_h = 280
         self.win_w = 205
         self.name = 'Timer'

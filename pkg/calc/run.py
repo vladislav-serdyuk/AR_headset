@@ -7,7 +7,6 @@ from GUIlib import WindowGUI
 class App(WindowGUI):
     def __init__(self):
         super().__init__()
-        self.y = 60
         self.win_h = 215
         self.win_w = 175
         self.name = 'Calculator'

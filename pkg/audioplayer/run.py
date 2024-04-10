@@ -11,7 +11,6 @@ from GUIlib import WindowGUI
 class App(WindowGUI):
     def __init__(self):
         super().__init__()
-        self.y = 140
         self.win_h = 200
         self.win_w = 400
         self.name = 'Audio player'

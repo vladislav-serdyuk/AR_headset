@@ -7,7 +7,6 @@ from GUIlib import WindowGUI
 class App(WindowGUI):
     def __init__(self):
         super().__init__()
-        self.y = 20
         self.win_h = 220
         self.win_w = 490
         self.name = 'Keyboard'
