@@ -79,19 +79,17 @@ def get_frame():
         :return: Generator[bytes, Any, None]
         """
     while True:
-        ret, frame = cap.read()  # get frame from capture
+        _, frame = cap.read()  # get frame from capture
         frame = process_image(frame)
         h, w, c = frame.shape
-        border = np.zeros((h, int(w * 0.3), c), dtype=np.uint8)
-        frame = np.concatenate((border, frame, border), axis=1)
-        frame = np.concatenate((frame, frame), axis=1)
+        border = np.zeros((h, int(w * 0.6), c), dtype=np.uint8)
+        frame = np.concatenate((frame, border, frame), axis=1)
         if show_window:
             cv2.imshow('video', frame)
             cv2.waitKey(1)
 
-        _, buffer = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+               b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', frame)[1].tobytes() + b'\r\n')
 
 
 # setting
