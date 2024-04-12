@@ -9,14 +9,14 @@
 
 ### Использавание
 #### Часы
-Вытените указ. палец в часы часть, чтобы передвинуть
+Зажмите большой с указательным, чтобы передвигать
 
 Зажмите большой с средним, чтобы изменить тип
 
 #### Окна
 Зажмите большой с указательным, чтобы передвигать
 
-Зажмите большой с указательным, чтобы свернуть
+Зажмите большой с указательным в нижнем правом углу, чтобы свернуть
 
 #### Кнопки
 Нажатие - зажмите большой с указательным
@@ -95,7 +95,6 @@ def get_frame() -> Generator[bytes, Any, None]:
 debug = True
 hand_on_gui = True
 show_window = True
-# end
 
 ```
 
@@ -112,6 +111,8 @@ class GUI:
         self.x = 10
         self.y = 10
         self.track = False
+        self.track_x = 0
+        self.track_y = 0
 
     def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
                  buffer: list[str]): ...  # track finger
@@ -120,19 +121,21 @@ class GUI:
 class WindowGUI(GUI):
     def __init__(self):
         super().__init__()
+        global pos_index
         self.hide = True
+        self.pressed_button = False
         self.background_color = (255, 255, 255)
-        self.border_color = (0, 0, 0)
-        self.border_thickness = 2
         self.name = 'window'
         self.title_h = 30
         self.title_color = (0, 0, 0)
         self.win_h = 100
         self.win_w = 210
+        self.hide_w = 130
         self.h = self.title_h
-        self.w = self.win_w - 50
-        self.x = 200
-        self.y = 200
+        self.w = self.hide_w
+        self.x = 450
+        self.y = 15 + pos_index * 40
+        pos_index += 1
         self.t_pre = 0
 
     def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
@@ -150,14 +153,32 @@ class WindowGUI(GUI):
 ```
 
 ### Создание пакета
-Создайте:
+Создайте папку
 
+В ней создайте фаил pkg_data.json и папку files
+
+В папке files создайте run.py
+
+run.py:
 ```
-folder
-|   pkg_data.json
-|
-\---files
-        run.py
+import numpy as np
+import cv2
+
+from GUIlib import WindowGUI
+
+
+class App(WindowGUI):
+    def __init__(self):
+        super().__init__()
+        self.win_h = 200
+        self.win_w = 200
+        self.name = 'My App'
+
+    def __call__(self, img, fingers_up, fingers_touch, landmark, buffer: list):
+        super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
+        if self.hide:
+            return
+
 ```
 
 pkg_data.json:
@@ -168,4 +189,5 @@ pkg_data.json:
   "info": "This is My Pkg"
 }
 ```
-Упакуйте в zip
+
+Упакуйте **содержимое** в zip (**не папку!!!**)
