@@ -31,7 +31,7 @@ class GUI:
             track = True
             self.x = landmark[8][0] - self.track_x
             self.y = landmark[8][1] - self.track_y
-        if fingers_touch[0] == 0 and self.track:
+        if fingers_touch[0] == 0:
             self.track = False
             track = False
 
@@ -48,13 +48,13 @@ class WindowGUI(GUI):
         self.title_color = (0, 0, 0)
         self.win_h = 100
         self.win_w = 210
+        self.hide_w = 130
         self.h = self.title_h
-        self.w = self.win_w - 50
+        self.w = self.hide_w
         self.x = 450
         self.y = 15 + pos_index * 40
         pos_index += 1
         self.t_pre = 0
-        self.hide_w = 130
 
     def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
                  buffer: list[str]):
@@ -74,21 +74,19 @@ class WindowGUI(GUI):
             self.t_pre = 0
 
         if self.hide:
-            self.rectangle(img, 0, self.win_h, self.hide_w + 50, self.h, self.background_color)
-            self.text(img, 10, self.win_h + self.title_h - 10, self.name, self.title_color)
+            self.rectangle(img, 0, self.win_h, self.w + 50, self.h, self.background_color)
             cv2.line(img, (self.x + self.w + 15, self.y + self.title_h // 2),
                      (self.x + self.w + 35, self.y + self.title_h // 2), (0, 0, 0), 2)
 
         else:
-            self.rectangle(img, 0, 0, self.win_w, self.win_h + self.title_h, self.background_color)
-            self.rectangle(img, 0, 0, self.win_w, self.win_h, self.background_color)
-            self.text(img, 10, self.win_h + self.title_h - 10, self.name, self.title_color)
+            self.rectangle(img, 0, 0, self.w + 50, self.win_h + self.title_h, self.background_color)
+            self.rectangle(img, 0, 0, self.w + 50, self.win_h, self.background_color)
             cv2.line(img, (self.x + self.w + 15, self.y + self.title_h // 2),
                      (self.x + self.w + 35, self.y + self.title_h // 2), (0, 0, 0), 2)
 
-    def rectangle(self, img, x, y, w, h, color, radius=10, thickness=-1, line_type=cv2.LINE_AA):
-        overlay = img.copy()
+        self.text(img, 10, self.win_h + self.title_h - 10, self.name, self.title_color)
 
+    def rectangle(self, img, x, y, w, h, color, radius=10, thickness=-1, line_type=cv2.LINE_AA):
         #  corners:
         #  p1 - p2
         #  |     |
@@ -101,19 +99,17 @@ class WindowGUI(GUI):
         p3 = bottomRight
         p4 = (topLeft[0], bottomRight[1])
 
-        if thickness < 0:
-            # // draw rectangle
+        overlay = img.copy()
+        if thickness < 0:  # // draw rectangle
             cv2.rectangle(overlay, (p1[0] + radius, p1[1]), (p3[0] - radius, p3[1]), color, thickness, line_type)
             cv2.rectangle(overlay, (p1[0], p1[1] + radius), (p3[0], p3[1] - radius), color, thickness, line_type)
-        else:
-            # // draw straight lines
+        else:  # // draw straight lines
             cv2.line(overlay, (p1[0] + radius, p1[1]), (p2[0] - radius, p2[1]), color, thickness, line_type)
             cv2.line(overlay, (p2[0], p2[1] + radius), (p3[0], p3[1] - radius), color, thickness, line_type)
             cv2.line(overlay, (p4[0] + radius, p4[1]), (p3[0] - radius, p3[1]), color, thickness, line_type)
             cv2.line(overlay, (p1[0], p1[1] + radius), (p4[0], p4[1] - radius), color, thickness, line_type)
 
-        # // draw arcs
-        if radius > 0:
+        if radius > 0:  # // draw arcs
             cv2.ellipse(overlay, (p1[0] + radius, p1[1] + radius), (radius, radius), 180.0, 0, 90, color, thickness,
                         line_type)
             cv2.ellipse(overlay, (p2[0] - radius, p2[1] + radius), (radius, radius), 270.0, 0, 90, color, thickness,
