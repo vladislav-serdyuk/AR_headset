@@ -96,20 +96,11 @@ def get_frame() -> Generator[bytes, Any, None]:
 # setting
 debug = True
 hand_on_gui = True
-flip_img = False
 show_window = True
 # end
 
 ```
-#### GUImgr.py
-```
-def init_gui(): ...
 
-
-def draw_gui(img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]]): ...
-
-def update_msg(): ...
-```
 #### GUIlib.py
 ```
 import cv2
