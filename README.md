@@ -45,8 +45,6 @@ main.py: оснавной файл
 
 GUIlib.py: Библиотека GUI
 
-GUImgr.py: инициализация пакетов и отрисовка
-
 pkglist.json: хранит данные пакетов
 
 templates/index.html: страница трансляции
