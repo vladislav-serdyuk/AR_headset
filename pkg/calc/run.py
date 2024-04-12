@@ -36,6 +36,11 @@ class App(WindowGUI):
         if x == 'c':
             self.expression = ''
         elif x == '=':
-            self.expression = str(eval(self.expression))
+            try:
+                self.expression = str(eval(self.expression))
+            except SyntaxError:
+                pass
+            except ZeroDivisionError:
+                pass
         else:
             self.expression += x
