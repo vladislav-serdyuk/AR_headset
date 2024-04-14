@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 
 track = False
+pressed_button = False
 
 
 class GUI:
@@ -39,14 +40,12 @@ class WindowGUI(GUI):
     def __init__(self):
         super().__init__()
         self.hide = True
-        self.pressed_button = False
         self.background_color = (255, 255, 255)
         self.name = 'window'
-        self.title_h = 30
         self.title_color = (0, 0, 0)
         self.win_h = 100
         self.win_w = 210
-        self.h = self.title_h
+        self.h = 30
         self.w = self.win_w - 50
         self.x = 200
         self.y = 400
@@ -58,17 +57,16 @@ class WindowGUI(GUI):
                 buffer.pop()
                 self.hide = False
         else:
-            self.h = self.title_h
             self.w = self.win_w - 50
             if (self.x + self.w <= landmark[8][0] <= self.x + self.win_w
                     and self.y <= landmark[8][1] <= self.y + self.h and fingers_touch[0] and not track):
                 self.hide = True
             super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
-            self.rectangle(img, 0, 0, self.w + 50, self.win_h + self.title_h, self.background_color)
+            self.rectangle(img, 0, 0, self.w + 50, self.win_h + self.h, self.background_color)
             self.rectangle(img, 0, 0, self.w + 50, self.win_h, self.background_color)
-            self.text(img, 10, self.win_h + self.title_h - 10, self.name, self.title_color)
-            cv2.line(img, (self.x + self.w + 15, self.y + self.title_h // 2),
-                     (self.x + self.w + 35, self.y + self.title_h // 2), (0, 0, 0), 2)
+            self.text(img, 10, self.win_h + self.h - 10, self.name, self.title_color)
+            cv2.line(img, (self.x + self.w + 15, self.y + self.h // 2),
+                     (self.x + self.w + 35, self.y + self.h // 2), (0, 0, 0), 2)
 
     def rectangle(self, img, x, y, w, h, color, radius=10, thickness=-1, line_type=cv2.LINE_AA):
         #  corners:
@@ -103,28 +101,26 @@ class WindowGUI(GUI):
             cv2.ellipse(overlay, (p4[0] + radius, p4[1] - radius), (radius, radius), 90.0, 0, 90, color, thickness,
                         line_type)
         alpha = 0.6
-        new_img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
-        img[:][:] = new_img
+        img[:] = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
 
     def text(self, img, x, y, text, color, text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
         overlay = img.copy()
         cv2.putText(overlay, text, (self.x + x, self.y - self.win_h + y), text_fontFace, text_fontScale, color)
         alpha = 0.8
-        new_img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
-        img[:][:] = new_img
+        img[:] = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
 
     def button(self, img, x, y, w, h, text, color, action, fingers_touch, landmark,
                text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
+        global pressed_button
         self.rectangle(img, x, y, w, h, color)
         self.text(img, x + 10, y + h - 10, text, text_color,
                   text_fontFace=text_fontFace, text_fontScale=text_fontScale)
         if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
-                and (self.y - self.win_h + y <= landmark[4][1] <= self.y - self.win_h + y + h)):
-            if not self.pressed_button:
-                self.pressed_button = True
-                action()
+                and (self.y - self.win_h + y <= landmark[4][1] <= self.y - self.win_h + y + h) and not pressed_button):
+            pressed_button = True
+            action()
         elif not fingers_touch[0]:
-            self.pressed_button = False
+            pressed_button = False
 
     def add_img(self, img, x, y, img2):
         h1, w1, c1 = img.shape
