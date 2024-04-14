@@ -22,7 +22,6 @@ class App(WindowGUI):
         self.audio_files = audio_files
         self.select = ''
         self.is_play = False
-        self.hide_w = 160
 
     def __call__(self, img, fingers_up, fingers_touch, landmark, buffer: list):
         super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
