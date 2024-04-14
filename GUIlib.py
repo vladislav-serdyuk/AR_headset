@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 
 track = False
-pos_index = 0
 
 
 class GUI:
@@ -39,7 +38,6 @@ class GUI:
 class WindowGUI(GUI):
     def __init__(self):
         super().__init__()
-        global pos_index
         self.hide = True
         self.pressed_button = False
         self.background_color = (255, 255, 255)
@@ -48,43 +46,29 @@ class WindowGUI(GUI):
         self.title_color = (0, 0, 0)
         self.win_h = 100
         self.win_w = 210
-        self.hide_w = 130
         self.h = self.title_h
-        self.w = self.hide_w
-        self.x = 450
-        self.y = 15 + pos_index * 40
-        pos_index += 1
-        self.t_pre = 0
+        self.w = self.win_w - 50
+        self.x = 200
+        self.y = 400
 
     def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
                  buffer: list[str]):
-        self.h = self.title_h
         if self.hide:
-            self.w = self.hide_w
+            if buffer and buffer[-1] == f'open:{self.name}':
+                buffer.pop()
+                self.hide = False
         else:
+            self.h = self.title_h
             self.w = self.win_w - 50
-        super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
-
-        if ((not self.t_pre) and self.x + self.w <= landmark[8][0] <= self.x + self.w + 50
-                and self.y <= landmark[8][1] <= self.y + self.h) and fingers_touch[0] and not track:
-            self.t_pre = 1
-            self.hide = not self.hide
-        elif ((not (self.x + self.w <= landmark[8][0] <= self.x + self.w + 50
-                    and self.y <= landmark[8][1] <= self.y + self.h)) or not fingers_touch[0]) and self.t_pre:
-            self.t_pre = 0
-
-        if self.hide:
-            self.rectangle(img, 0, self.win_h, self.w + 50, self.h, self.background_color)
-            cv2.line(img, (self.x + self.w + 15, self.y + self.title_h // 2),
-                     (self.x + self.w + 35, self.y + self.title_h // 2), (0, 0, 0), 2)
-
-        else:
+            if (self.x + self.w <= landmark[8][0] <= self.x + self.win_w
+                    and self.y <= landmark[8][1] <= self.y + self.h and fingers_touch[0] and not track):
+                self.hide = True
+            super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
             self.rectangle(img, 0, 0, self.w + 50, self.win_h + self.title_h, self.background_color)
             self.rectangle(img, 0, 0, self.w + 50, self.win_h, self.background_color)
+            self.text(img, 10, self.win_h + self.title_h - 10, self.name, self.title_color)
             cv2.line(img, (self.x + self.w + 15, self.y + self.title_h // 2),
                      (self.x + self.w + 35, self.y + self.title_h // 2), (0, 0, 0), 2)
-
-        self.text(img, 10, self.win_h + self.title_h - 10, self.name, self.title_color)
 
     def rectangle(self, img, x, y, w, h, color, radius=10, thickness=-1, line_type=cv2.LINE_AA):
         #  corners:
@@ -145,5 +129,5 @@ class WindowGUI(GUI):
     def add_img(self, img, x, y, img2):
         h1, w1, c1 = img.shape
         h2, w2, c2 = img2.shape
-        img[self.y - self.win_h + y:self.y - self.win_h + y + h2, self.x + x:self.x + x + w2]\
+        img[self.y - self.win_h + y:self.y - self.win_h + y + h2, self.x + x:self.x + x + w2] \
             = img2[max(0, -y):min(h2, h1 - y), max(0, -x):min(w2, w1 - x)]
