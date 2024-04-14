@@ -124,22 +124,16 @@ class GUI:
 class WindowGUI(GUI):
     def __init__(self):
         super().__init__()
-        global pos_index
         self.hide = True
-        self.pressed_button = False
         self.background_color = (255, 255, 255)
         self.name = 'window'
-        self.title_h = 30
         self.title_color = (0, 0, 0)
         self.win_h = 100
         self.win_w = 210
-        self.hide_w = 130
-        self.h = self.title_h
-        self.w = self.hide_w
-        self.x = 450
-        self.y = 15 + pos_index * 40
-        pos_index += 1
-        self.t_pre = 0
+        self.h = 30
+        self.w = self.win_w - 50
+        self.x = 200
+        self.y = 400
 
     def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
                  buffer: list[str]): ...
