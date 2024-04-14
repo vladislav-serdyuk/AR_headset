@@ -1,8 +1,9 @@
 {
-  "clock": {"dir": "clock"},
-  "paint": {"dir": "paint"},
+  "clock": {"dir": "clock", "info": "Clock"},
+  "paint": {"dir": "paint", "info": "Paint"},
   "keyboard": {"dir": "keyboard", "info": "Keyboard"},
   "calc": {"dir": "calc", "info": "Calculator"},
   "timer": {"dir": "timer", "info":  "Timer"},
-  "audio_player": {"dir":  "audioplayer", "info": "Audio player"}
+  "audio_player": {"dir":  "audioplayer", "info": "Audio player"},
+  "sys_app_menu": {"dir":  "menu", "info": "Menu"}
 }
