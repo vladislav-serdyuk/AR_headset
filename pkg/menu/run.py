@@ -13,7 +13,7 @@ class App(WindowGUI):
         self.y = 100
         self.win_h = 0
         self.win_w = 0
-        self.name = 'My App'
+        self.name = 'Menu'
         self.apps = []
         with open('pkglist.json') as file:
             pkg_list: dict = json.JSONDecoder().decode(file.read())
