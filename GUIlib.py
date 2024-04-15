@@ -20,8 +20,7 @@ class GUI:
             return
         if fingers_touch[0] == 0:
             self._track = False
-            return
-        if self._track:
+        elif self._track:
             self.x = landmark[8][0] - self._track_x
             self.y = landmark[8][1] - self._track_y
         elif self.x <= landmark[8][0] <= self.x + self.w and self.y <= landmark[8][1] <= self.y + self.h:
@@ -109,12 +108,12 @@ class WindowGUI(GUI):
         self.rectangle(img, x, y, w, h, color)
         self.text(img, x + 10, y + h - 10, text, text_color,
                   text_fontFace=text_fontFace, text_fontScale=text_fontScale)
-        if (fingers_touch[0] and (self.x + x <= landmark[4][0] <= self.x + x + w)
-                and (self.y - self.win_h + y <= landmark[4][1] <= self.y - self.win_h + y + h) and not pressed_button):
+        if not fingers_touch[0]:
+            pressed_button = False
+        elif (not pressed_button and (self.x + x <= landmark[4][0] <= self.x + x + w)
+                and (self.y - self.win_h + y <= landmark[4][1] <= self.y - self.win_h + y + h)):
             pressed_button = True
             action()
-        elif not fingers_touch[0]:
-            pressed_button = False
 
     def add_img(self, img, x, y, img2):
         h1, w1, c1 = img.shape
