@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 
-track = False
 pressed_button = False
 
 
@@ -11,29 +10,24 @@ class GUI:
         self.w = 50
         self.x = 10
         self.y = 10
-        self.track = False
-        self.track_x = 0
-        self.track_y = 0
+        self._track = False
+        self._track_x = 0
+        self._track_y = 0
 
     def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
                  buffer: list[str]):  # track finger
-        global track
         if landmark[0] == (0, 0):
             return
-        if self.track:
-            self.x = landmark[8][0] - self.track_x
-            self.y = landmark[8][1] - self.track_y
-        if fingers_touch[0] == 1 and self.x <= landmark[8][0] <= self.x + self.w \
-                and self.y <= landmark[8][1] <= self.y + self.h and not track:
-            self.track_x = landmark[8][0] - self.x
-            self.track_y = landmark[8][1] - self.y
-            self.track = True
-            track = True
-            self.x = landmark[8][0] - self.track_x
-            self.y = landmark[8][1] - self.track_y
         if fingers_touch[0] == 0:
-            self.track = False
-            track = False
+            self._track = False
+            return
+        if self._track:
+            self.x = landmark[8][0] - self._track_x
+            self.y = landmark[8][1] - self._track_y
+        elif self.x <= landmark[8][0] <= self.x + self.w and self.y <= landmark[8][1] <= self.y + self.h:
+            self._track_x = landmark[8][0] - self.x
+            self._track_y = landmark[8][1] - self.y
+            self._track = True
 
 
 class WindowGUI(GUI):
@@ -58,8 +52,8 @@ class WindowGUI(GUI):
                 self.hide = False
         else:
             self.w = self.win_w - 50
-            if (self.x + self.w <= landmark[8][0] <= self.x + self.win_w
-                    and self.y <= landmark[8][1] <= self.y + self.h and fingers_touch[0] and not track):
+            if (self.x + self.w <= landmark[8][0] <= self.x + self.win_w and self.y <= landmark[8][1] <= self.y + self.h
+                    and fingers_touch[0]):
                 self.hide = True
             super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
             self.rectangle(img, 0, 0, self.w + 50, self.win_h + self.h, self.background_color)
