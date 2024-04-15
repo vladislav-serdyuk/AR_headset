@@ -30,7 +30,7 @@ def process_image(frame: np.ndarray) -> np.ndarray:
         fingers_touch = []
         for tip_id in [8, 12, 16, 20]:
             distance, _, _ = hand_detector.findDistance(landmark[4][0:2], landmark[tip_id][0:2])
-            if distance < 32:
+            if distance <= 30:
                 fingers_touch.append(1)
             else:
                 fingers_touch.append(0)
