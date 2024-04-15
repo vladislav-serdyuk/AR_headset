@@ -113,9 +113,6 @@ class GUI:
         self.w = 50
         self.x = 10
         self.y = 10
-        self.track = False
-        self.track_x = 0
-        self.track_y = 0
 
     def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
                  buffer: list[str]): ...  # track finger
