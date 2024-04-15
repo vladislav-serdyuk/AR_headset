@@ -7,12 +7,12 @@ from cvzone.SelfiSegmentationModule import SelfiSegmentation
 from cvzone.HandTrackingModule import HandDetector
 from flask import Flask, render_template, Response
 
-segmentor = SelfiSegmentation()  # remove background
+segmentor = SelfiSegmentation(model=1)  # remove background
 hand_detector = HandDetector(staticMode=False,
                              maxHands=2,
-                             modelComplexity=1,
+                             modelComplexity=0,
                              detectionCon=0.7,
-                             minTrackCon=0.5)
+                             minTrackCon=0.7)
 app = Flask(__name__)  # server
 cap = cv2.VideoCapture(0)
 app_buffer = []
