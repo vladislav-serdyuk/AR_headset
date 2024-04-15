@@ -46,7 +46,8 @@ def process_image(frame: np.ndarray) -> np.ndarray:
 
             crop_img = copy_frame[min_y:max_y, min_x:max_x]
             src = segmentor.removeBG(crop_img, (0, 0, 0), 0.3)
-            frame[min_y:max_y, min_x:max_x][src != (0, 0, 0)] = src[src != (0, 0, 0)]
+            mask = (src[:, :, 0] != 0) | (src[:, :, 1] != 0) | (src[:, :, 2] != 0)
+            frame[min_y:max_y, min_x:max_x][mask] = src[mask]
 
         if debug:
             cv2.putText(frame, str(fingers_up), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
