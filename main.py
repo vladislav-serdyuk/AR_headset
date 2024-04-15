@@ -82,8 +82,8 @@ def get_frame():
         _, frame = cap.read()  # get frame from capture
         frame = process_image(frame)
         h, w, c = frame.shape
-        border = np.zeros((h, int(w * 0.6), c), dtype=np.uint8)
-        frame = np.concatenate((frame, border, frame), axis=1)
+        black_streak = np.zeros((h, int(w * 0.6), c), dtype=np.uint8)
+        frame = np.concatenate((frame, black_streak, frame), axis=1)
         if show_window:
             cv2.imshow('video', frame)
             cv2.waitKey(1)
