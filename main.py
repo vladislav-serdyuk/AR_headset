@@ -29,7 +29,7 @@ def process_image(frame: np.ndarray) -> np.ndarray:
 
         fingers_touch = []
         for tip_id in [8, 12, 16, 20]:
-            length, info, _ = hand_detector.findDistance(landmark[4][0:2], landmark[tip_id][0:2])
+            length, _, _ = hand_detector.findDistance(landmark[4][0:2], landmark[tip_id][0:2])
             if length < 32:
                 fingers_touch.append(1)
             else:
@@ -43,17 +43,13 @@ def process_image(frame: np.ndarray) -> np.ndarray:
             max_x = bbox[0] + bbox[2] + 20
             min_y = max(bbox[1] - 20, 0)
             max_y = bbox[1] + bbox[3] + 20
-
-            crop_img = copy_frame[min_y:max_y, min_x:max_x]
-            src = segmentor.removeBG(crop_img, (0, 0, 0), 0.3)
-            mask = (src[:, :, 0] != 0) | (src[:, :, 1] != 0) | (src[:, :, 2] != 0)
-            frame[min_y:max_y, min_x:max_x][mask] = src[mask]
+            frame[min_y:max_y, min_x:max_x] = (
+                segmentor.removeBG(copy_frame[min_y:max_y, min_x:max_x], frame[min_y:max_y, min_x:max_x], 0.3))
 
         if debug:
             cv2.putText(frame, str(fingers_up), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
             cv2.putText(frame, f'   {str(fingers_touch)}', (10, 120), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
-            for mark_id, lm in enumerate(landmark):
-                cx, cy, cz = lm
+            for cx, cy, cz in landmark:
                 cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
     else:
         for gui in Apps:
@@ -81,7 +77,7 @@ def get_frame():
     """
         Получает изображение с камеры, обрабатывает, отправляет клиенту
         :return: Generator[bytes, Any, None]
-        """
+    """
     while True:
         _, frame = cap.read()  # get frame from capture
         frame = process_image(frame)
