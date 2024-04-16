@@ -36,7 +36,10 @@ h = часы
 m = минуты
 
 #### Пакеты
-Используйте pkgmgr.py
+Вы можете их тайти в этом репозитории https://github.com/vladislav-serdyuk/AR_headset_pkgs
+
+##### Установка и удаление
+Запустите pkgmgr.py
 
 Сначала введите
 i - install, d - delete, q - quit
