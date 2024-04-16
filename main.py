@@ -9,10 +9,10 @@ from flask import Flask, render_template, Response
 
 segmentor = SelfiSegmentation(model=1)  # remove background
 hand_detector = HandDetector(staticMode=False,
-                             maxHands=2,
-                             modelComplexity=0,
+                             maxHands=1,
+                             modelComplexity=1,
                              detectionCon=0.7,
-                             minTrackCon=0.7)
+                             minTrackCon=0.5)
 app = Flask(__name__)  # server
 cap = cv2.VideoCapture(0)
 app_buffer = []
