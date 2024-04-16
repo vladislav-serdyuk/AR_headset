@@ -1,4 +1,5 @@
 # AR_headset
+# Ver: Dev prerelease n.n
 ![img](https://github.com/vladislav-serdyuk/AR_headset/blob/main/docs/GUI_exemple.png)
 ## Важно
 Библиотека opencv-python ver: 4.9.0.80 имеет дыру безопасности (CVE-2019-9423)
@@ -133,7 +134,7 @@ class WindowGUI(GUI):
         self.y = 400
 
     def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
-                 buffer: list[str]): ...
+                 buffer: list[str]): ... # window rander
 
     def rectangle(self, img, x, y, w, h, color, radius=10, thickness=-1, line_type=cv2.LINE_AA): ...
 
@@ -145,6 +146,11 @@ class WindowGUI(GUI):
     def add_img(self, img, x, y, img2): ...
 
 ```
+
+### Buffer
+Buffer  предстовляет собой list\[str] и нужен для обмена информацией между приложениями
+
+Приложения должны добовлять даные в конец, а доставать из начала или конца
 
 ### Создание пакета
 Создайте папку
@@ -172,6 +178,7 @@ class App(WindowGUI):
         super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
         if self.hide:
             return
+        ...
 
 ```
 
@@ -180,7 +187,7 @@ pkg_data.json:
 {
   "name": "my_pkg",
   "dir": "myPkg",
-  "info": "This is My Pkg"
+  "info": "My App"
 }
 ```
 
