@@ -185,7 +185,7 @@ class WindowGUI(GUI):
     def add_img(self, img: np.ndarray, x: int, y: int, img2: np.ndarray):
         """
         Добавляет изображение
-        :param img: кода добавлять
+        :param img: куда добавлять
         :param x: x координата верхний правой точки
         :param y: y координата верхний правой точки
         :param img2: Что добавлять
@@ -193,5 +193,7 @@ class WindowGUI(GUI):
         """
         h1, w1, c1 = img.shape
         h2, w2, c2 = img2.shape
-        img[self.y - self.win_h + y:self.y - self.win_h + y + h2, self.x + x:self.x + x + w2] \
-            = img2[max(0, -y):min(h2, h1 - y), max(0, -x):min(w2, w1 - x)]
+        abs_x = self.x + x
+        abs_y = self.y - self.win_h + y
+        img[max(0, abs_y):abs_y + h2, max(0, abs_x):abs_x + w2] \
+            = img2[max(0, -abs_y):h1 - abs_y, max(0, -abs_x):w1 - abs_x]
