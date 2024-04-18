@@ -16,7 +16,8 @@ AR_headset распространяется в надежде, что она б�
 import cv2
 import numpy as np
 
-pressed_button = False
+_pressed_button = False
+_window_track = False
 
 
 class GUI:
@@ -33,15 +34,19 @@ class GUI:
                  buffer: list[str]):  # track finger
         if landmark[0] == (0, 0):
             return
+        global _window_track
         if fingers_touch[0] == 0:
             self._track = False
+            _window_track = False
         elif self._track:
             self.x = landmark[8][0] - self._track_x
             self.y = landmark[8][1] - self._track_y
-        elif self.x <= landmark[8][0] <= self.x + self.w and self.y <= landmark[8][1] <= self.y + self.h:
+        elif (not _window_track and self.x <= landmark[8][0] <= self.x + self.w
+              and self.y <= landmark[8][1] <= self.y + self.h):
             self._track_x = landmark[8][0] - self.x
             self._track_y = landmark[8][1] - self.y
             self._track = True
+            _window_track = True
 
 
 class WindowGUI(GUI):
@@ -119,15 +124,15 @@ class WindowGUI(GUI):
 
     def button(self, img, x, y, w, h, text, color, action, fingers_touch, landmark,
                text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
-        global pressed_button
+        global _pressed_button
         self.rectangle(img, x, y, w, h, color)
         self.text(img, x + 10, y + h - 10, text, text_color,
                   text_fontFace=text_fontFace, text_fontScale=text_fontScale)
         if not fingers_touch[0]:
-            pressed_button = False
-        elif (not pressed_button and (self.x + x <= landmark[4][0] <= self.x + x + w)
-                and (self.y - self.win_h + y <= landmark[4][1] <= self.y - self.win_h + y + h)):
-            pressed_button = True
+            _pressed_button = False
+        elif (not _pressed_button and (self.x + x <= landmark[4][0] <= self.x + x + w)
+              and (self.y - self.win_h + y <= landmark[4][1] <= self.y - self.win_h + y + h)):
+            _pressed_button = True
             action()
 
     def add_img(self, img, x, y, img2):
