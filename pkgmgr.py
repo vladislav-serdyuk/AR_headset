@@ -19,7 +19,7 @@ import os
 import shutil
 
 
-def install_pkg(file_name):
+def install_pkg(file_name: str):
     with zipfile.ZipFile(file_name) as zip_file:
         with zip_file.open('pkg_data.json') as data_file:
             pkg_meta_data = json.JSONDecoder().decode(data_file.read().decode())
@@ -41,7 +41,7 @@ def install_pkg(file_name):
         file.write(json.JSONEncoder().encode(pkg_list))
 
 
-def delete_pkg(pkg_name):
+def delete_pkg(pkg_name: str):
     with open('pkglist.json') as file:
         print('READ: pkglist.json')
         pkg_list = json.JSONDecoder().decode(file.read())
