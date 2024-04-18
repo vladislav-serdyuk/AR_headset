@@ -13,6 +13,8 @@ AR_headset распространяется в надежде, что она б�
 Если это не так, см. <https://www.gnu.org/licenses/>.
 """
 
+import typing
+
 import cv2
 import numpy as np
 
@@ -81,7 +83,8 @@ class WindowGUI(GUI):
             cv2.line(img, (self.x + self.w + 15, self.y + self.h // 2),
                      (self.x + self.w + 35, self.y + self.h // 2), (0, 0, 0), 2)
 
-    def rectangle(self, img, x, y, w, h, color, radius=10, thickness=-1, line_type=cv2.LINE_AA):
+    def rectangle(self, img: np.ndarray, x: int, y: int, w: int, h: int, color: tuple[int, int, int], radius=10,
+                  thickness=-1, line_type=cv2.LINE_AA):
         #  corners:
         #  p1 - p2
         #  |     |
@@ -116,13 +119,15 @@ class WindowGUI(GUI):
         alpha = 0.6
         img[:] = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
 
-    def text(self, img, x, y, text, color, text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
+    def text(self, img: np.ndarray, x: int, y: int, text: str, color: tuple[int, int, int],
+             text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
         overlay = img.copy()
         cv2.putText(overlay, text, (self.x + x, self.y - self.win_h + y), text_fontFace, text_fontScale, color)
         alpha = 0.8
         img[:] = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
 
-    def button(self, img, x, y, w, h, text, color, action, fingers_touch, landmark,
+    def button(self, img: np.ndarray, x: int, y: int, w: int, h: int, text: str, color: tuple[int, int, int],
+               action: typing.Callable[[], None], fingers_touch: list[int], landmark: list[list[int]],
                text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
         global _pressed_button
         self.rectangle(img, x, y, w, h, color)
@@ -135,7 +140,7 @@ class WindowGUI(GUI):
             _pressed_button = True
             action()
 
-    def add_img(self, img, x, y, img2):
+    def add_img(self, img: np.ndarray, x: int, y: int, img2: np.ndarray):
         h1, w1, c1 = img.shape
         h2, w2, c2 = img2.shape
         img[self.y - self.win_h + y:self.y - self.win_h + y + h2, self.x + x:self.x + x + w2] \
