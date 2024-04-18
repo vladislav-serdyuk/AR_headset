@@ -85,6 +85,20 @@ class WindowGUI(GUI):
 
     def rectangle(self, img: np.ndarray, x: int, y: int, w: int, h: int, color: tuple[int, int, int], radius=10,
                   thickness=-1, line_type=cv2.LINE_AA):
+        """
+        Рисует прямоугольник
+        :param img: где рисовать
+        :param x: x координата верхний правой точки
+        :param y: y координата верхний правой точки
+        :param w: ширина
+        :param h: высота
+        :param color: цвет
+        :param radius: закругление углов
+        :param thickness: толщина
+        :param line_type: тип линии
+        :return:
+        """
+
         #  corners:
         #  p1 - p2
         #  |     |
@@ -121,6 +135,17 @@ class WindowGUI(GUI):
 
     def text(self, img: np.ndarray, x: int, y: int, text: str, color: tuple[int, int, int],
              text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
+        """
+        Рисует текст
+        :param img: где рисовать
+        :param x: x координата нижней левой точки
+        :param y: y координата нижней левой точки
+        :param text: текст
+        :param color: цвет
+        :param text_fontFace: шрифт
+        :param text_fontScale: размер
+        :return:
+        """
         overlay = img.copy()
         cv2.putText(overlay, text, (self.x + x, self.y - self.win_h + y), text_fontFace, text_fontScale, color)
         alpha = 0.8
@@ -129,6 +154,23 @@ class WindowGUI(GUI):
     def button(self, img: np.ndarray, x: int, y: int, w: int, h: int, text: str, color: tuple[int, int, int],
                action: typing.Callable[[], None], fingers_touch: list[int], landmark: list[list[int]],
                text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
+        """
+        Рисует кнопку
+        :param img: где рисовать
+        :param x: x координата верхний правой точки
+        :param y: y координата верхний правой точки
+        :param w: ширина
+        :param h: высота
+        :param text: текст
+        :param color: цвет
+        :param action: действие при нажатии
+        :param fingers_touch: list[int]
+        :param landmark: list[list[int]]
+        :param text_color: цвет текста
+        :param text_fontFace: шрифт
+        :param text_fontScale: размер
+        :return:
+        """
         global _pressed_button
         self.rectangle(img, x, y, w, h, color)
         self.text(img, x + 10, y + h - 10, text, text_color,
@@ -141,6 +183,14 @@ class WindowGUI(GUI):
             action()
 
     def add_img(self, img: np.ndarray, x: int, y: int, img2: np.ndarray):
+        """
+        Добавляет изображение
+        :param img: кода добавлять
+        :param x: x координата верхний правой точки
+        :param y: y координата верхний правой точки
+        :param img2: Что добавлять
+        :return:
+        """
         h1, w1, c1 = img.shape
         h2, w2, c2 = img2.shape
         img[self.y - self.win_h + y:self.y - self.win_h + y + h2, self.x + x:self.x + x + w2] \
