@@ -1,6 +1,8 @@
 # AR_headset
 # Ver: Dev prerelease n.n
 ![img](https://github.com/vladislav-serdyuk/AR_headset/blob/main/docs/GUI_exemple.png)
+
+![GPL](https://www.gnu.org/graphics/gplv3-with-text-136x68.png)
 ## Важно
 Библиотека opencv-python ver: 4.9.0.80 имеет дыру безопасности (CVE-2019-9423)
 ## Для пользователей
