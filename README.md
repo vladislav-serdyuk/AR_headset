@@ -1,6 +1,6 @@
 # AR_headset
 # Ver: Dev prerelease n.n
-![img](https://github.com/vladislav-serdyuk/AR_headset/blob/main/docs/GUI_exemple.png)
+![img](./docs/GUI_exemple.png)
 
 ![GPL](https://www.gnu.org/graphics/gplv3-with-text-136x68.png)
 ## Важно
