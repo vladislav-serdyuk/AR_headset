@@ -79,7 +79,12 @@ pkg/pkg_name/run.py: главный файл пакета pkg_name
 ### Функции  и методы
 #### main.py
 ```
-def process_image(frame: np.ndarray) -> np.ndarray: ...
+def process_image(frame: np.ndarray):
+    """
+    Распознаёт руки и накладывает на изображение интерфейс
+    :param frame: входное изображение
+    """
+    ...
 
 @app.route('/')
 def index() -> str: ...
@@ -141,14 +146,70 @@ class WindowGUI(GUI):
     def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
                  buffer: list[str]): ... # window rander
 
-    def rectangle(self, img, x, y, w, h, color, radius=10, thickness=-1, line_type=cv2.LINE_AA): ...
+    def rectangle(self, img: np.ndarray, x: int, y: int, w: int, h: int, color: tuple[int, int, int], radius=10,
+                  thickness=-1, line_type=cv2.LINE_AA):
+        """
+        Рисует прямоугольник
+        :param img: где рисовать
+        :param x: x координата верхний правой точки
+        :param y: y координата верхний правой точки
+        :param w: ширина
+        :param h: высота
+        :param color: цвет
+        :param radius: закругление углов
+        :param thickness: толщина
+        :param line_type: тип линии
+        :return:
+        """
+        ...
 
-    def text(self, img, x, y, text, color, text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1): ...
+    def text(self, img: np.ndarray, x: int, y: int, text: str, color: tuple[int, int, int],
+         text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
+        """
+        Рисует текст
+        :param img: где рисовать
+        :param x: x координата нижней левой точки
+        :param y: y координата нижней левой точки
+        :param text: текст
+        :param color: цвет
+        :param text_fontFace: шрифт
+        :param text_fontScale: размер
+        :return:
+        """
+        ...
 
-    def button(self, img, x, y, w, h, text, color, action, fingers_touch, landmark,
-               text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1): ...
+    def button(self, img: np.ndarray, x: int, y: int, w: int, h: int, text: str, color: tuple[int, int, int],
+           action: typing.Callable[[], None], fingers_touch: list[int], landmark: list[list[int]],
+           text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
+        """
+        Рисует кнопку
+        :param img: где рисовать
+        :param x: x координата верхний правой точки
+        :param y: y координата верхний правой точки
+        :param w: ширина
+        :param h: высота
+        :param text: текст
+        :param color: цвет
+        :param action: действие при нажатии
+        :param fingers_touch: list[int]
+        :param landmark: list[list[int]]
+        :param text_color: цвет текста
+        :param text_fontFace: шрифт
+        :param text_fontScale: размер
+        :return:
+        """
+        ...
 
-    def add_img(self, img, x, y, img2): ...
+    def add_img(self, img: np.ndarray, x: int, y: int, img2: np.ndarray):
+        """
+        Добавляет изображение
+        :param img: куда добавлять
+        :param x: x координата верхний правой точки
+        :param y: y координата верхний правой точки
+        :param img2: Что добавлять
+        :return:
+        """
+        ...
 
 ```
 
