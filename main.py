@@ -33,7 +33,11 @@ cap = cv2.VideoCapture(0)
 app_buffer = []
 
 
-def process_image(frame: np.ndarray) -> np.ndarray:
+def process_image(frame: np.ndarray):
+    """
+    Распознаёт руки и накладывает на изображение интерфейс
+    :param frame: входное изображение
+    """
     copy_frame = frame.copy()
     hands, frame = hand_detector.findHands(frame, draw=debug, flipType=True)
     if hands:
@@ -70,8 +74,6 @@ def process_image(frame: np.ndarray) -> np.ndarray:
         for gui in Apps:
             gui(frame, [0] * 5, [0] * 4, [(0, 0)] * 20, app_buffer)
 
-    return frame
-
 
 @app.route('/')
 def index() -> str:
@@ -95,7 +97,7 @@ def get_frame():
     """
     while True:
         _, frame = cap.read()  # get frame from capture
-        frame = process_image(frame)
+        process_image(frame)
         h, w, c = frame.shape
         black_streak = np.zeros((h, int(w * 0.6), c), dtype=np.uint8)
         frame = np.concatenate((frame, black_streak, frame), axis=1)
