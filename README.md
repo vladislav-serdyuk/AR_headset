@@ -238,7 +238,7 @@ class App(WindowGUI):
         super().__init__()
         self.win_h = 200
         self.win_w = 200
-        self.name = 'My App'
+        self.name = 'My App' # = pkg_data.json["info"]
 
     def __call__(self, img, fingers_up, fingers_touch, landmark, buffer: list):
         super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
