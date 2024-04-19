@@ -5,5 +5,6 @@
   "calc": {"dir": "calc", "info": "Calculator"},
   "timer": {"dir": "timer", "info":  "Timer"},
   "audio_player": {"dir":  "audioplayer", "info": "Audio player"},
+  "video_player": {"dir": "videoplayer", "info": "Video player"},
   "sys_app_menu": {"dir":  "menu", "info": "Menu"}
 }
