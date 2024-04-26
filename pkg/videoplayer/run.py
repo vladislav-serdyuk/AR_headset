@@ -37,6 +37,7 @@ class App(WindowGUI):
         self.is_play = False
         self.video: None | cv2.VideoCapture = None
         self.last_time = time.time()
+        self.frame = None
 
     def __call__(self, img, fingers_up, fingers_touch, landmark, buffer: list):
         super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
@@ -52,14 +53,14 @@ class App(WindowGUI):
         if self.is_play:
             self.button(img, 0, self.win_h - 35, 230, 35, 'Stop', (0, 0, 255),
                         lambda: self.stop(), fingers_touch, landmark)
-            ret, frame = self.video.read()
-            if not ret:
-                self.is_play = False
-            elif time.time() >= self.last_time + 1/24:
+            if time.time() >= self.last_time + 1/24 or self.frame is None:
+                ret, frame = self.video.read()
+                if not ret:
+                    self.is_play = False
                 self.last_time = time.time()
                 h, w, c = frame.shape
-                frame = cv2.resize(frame, dsize=(w * (self.win_h + self.h) // h, self.win_h + self.h))
-                self.add_img(img, 240, 0, frame)
+                self.frame = cv2.resize(frame, dsize=(w * (self.win_h + self.h) // h, self.win_h + self.h))
+            self.add_img(img, 240, 0, self.frame)
         else:
             self.button(img, 0, self.win_h - 35, 230, 35, 'Play', (0, 255, 0),
                         lambda: self.play(), fingers_touch, landmark)
