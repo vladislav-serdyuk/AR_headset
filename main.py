@@ -109,7 +109,7 @@ def get_frame():
                b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', frame)[1].tobytes() + b'\r\n')
 
 
-# setting
+# settings
 debug = True
 hand_on_gui = True
 show_window = True
