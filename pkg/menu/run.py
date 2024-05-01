@@ -15,9 +15,6 @@ AR_headset распространяется в надежде, что она б�
 
 import json
 
-import numpy as np
-import cv2
-
 from GUIlib import WindowGUI
 
 
@@ -42,6 +39,8 @@ class App(WindowGUI):
             self.hide = False
         if self.hide:
             return
+        self.button(img, 450, -40, 80, 30, 'Close', (0, 0, 200), self.close,
+                    fingers_touch, landmark)
         for i, app in enumerate(self.apps):
             x = i % 3 * 180
             y = i // 3 * 40
@@ -50,4 +49,7 @@ class App(WindowGUI):
 
     def open(self, buffer: list, app):
         buffer.append(f'open:{app}')
+        self.hide = True
+
+    def close(self):
         self.hide = True
