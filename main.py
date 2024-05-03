@@ -19,7 +19,7 @@ import importlib
 import cv2
 import numpy as np
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
-from cvzone.HandTrackingModule import HandDetector
+from HandTrackingModule import HandDetector
 from flask import Flask, render_template, Response
 
 segmentor = SelfiSegmentation(model=1)  # remove background
@@ -33,23 +33,27 @@ cap = cv2.VideoCapture(0)
 app_buffer = []
 
 
+def find_distance(p1: tuple, p2: tuple):
+    return max(abs(p1[0] - p2[0]), abs(p1[1] - p2[1]))
+
+
 def process_image(frame: np.ndarray):
     """
     Распознаёт руки и накладывает на изображение интерфейс
     :param frame: входное изображение
     """
     copy_frame = frame.copy()
-    hands, frame = hand_detector.findHands(frame, draw=debug, flipType=True)
+    hands = hand_detector.findHands(frame)
     if hands:
         hand1 = hands[0]  # Get the first hand detected
         landmark = hand1["lmList"]  # List of 21 landmarks for the first hand
         bbox = hand1["bbox"]  # Bounding box around the first hand (x,y,w,h coordinates)
-        fingers_up = hand_detector.fingersUp(hand1)
+        fingers_up = hand1["fingersUp"]
 
         fingers_touch = []
         for tip_id in [8, 12, 16, 20]:
-            distance, _, _ = hand_detector.findDistance(landmark[4][0:2], landmark[tip_id][0:2])
-            if distance <= 30:
+            distance = find_distance(landmark[4][0:2], landmark[tip_id][0:2])
+            if distance < 30:
                 fingers_touch.append(1)
             else:
                 fingers_touch.append(0)
@@ -95,11 +99,12 @@ def get_frame():
         Получает изображение с камеры, обрабатывает, отправляет клиенту
         :return: Generator[bytes, Any, None]
     """
+    _, frame = cap.read()  # get frame from capture
+    h, w, c = frame.shape
+    black_streak = np.zeros((h, int(w * 0.6), c), dtype=np.uint8)
     while True:
         _, frame = cap.read()  # get frame from capture
         process_image(frame)
-        h, w, c = frame.shape
-        black_streak = np.zeros((h, int(w * 0.6), c), dtype=np.uint8)
         frame = np.concatenate((frame, black_streak, frame), axis=1)
         if show_window:
             cv2.imshow('video', frame)
