@@ -15,6 +15,8 @@ AR_headset распространяется в надежде, что она б�
 
 import json
 import importlib
+from threading import Thread
+from time import time
 
 import cv2
 import numpy as np
@@ -31,6 +33,22 @@ hand_detector = HandDetector(staticMode=False,
 app = Flask(__name__)  # server
 cap = cv2.VideoCapture(0)
 app_buffer = []
+output_image = None
+
+
+@app.route('/')
+def index() -> str:
+    return render_template('index.html')
+
+
+@app.route('/script.js')
+def script() -> str:
+    return render_template('script.js')
+
+
+@app.route('/video_feed')
+def video_feed() -> Response:
+    return Response(get_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 def find_distance(p1: tuple, p2: tuple):
@@ -79,39 +97,39 @@ def process_image(frame: np.ndarray):
             gui(frame, [0] * 5, [0] * 4, [(0, 0)] * 20, app_buffer)
 
 
-@app.route('/')
-def index() -> str:
-    return render_template('index.html')
+def update_output_image_in_background():
+    global output_image
+    ret, frame = cap.read()  # get frame from capture
+    if not ret:
+        print("can't get frame from capture")
+        return
+    h, w, c = frame.shape
+    black_streak = np.zeros((h, int(w * 0.6), c), dtype=np.uint8)
+    last_time = time()
+    while True:
+        ret, frame = cap.read()  # get frame from capture
+        if not ret:
+            continue
+        process_image(frame)
+        frame = np.concatenate((frame, black_streak, frame), axis=1)
+        output_image = frame
 
-
-@app.route('/script.js')
-def script() -> str:
-    return render_template('script.js')
-
-
-@app.route('/video_feed')
-def video_feed() -> Response:
-    return Response(get_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
+        if show_window:
+            cv2.imshow('video', frame)
+            cv2.waitKey(1)
+        print('fps: ', round(1 / (time() - last_time), 1))
+        last_time = time()
 
 
 def get_frame():
     """
-        Получает изображение с камеры, обрабатывает, отправляет клиенту
+        Получает изображение и отправляет клиенту
         :return: Generator[bytes, Any, None]
     """
-    _, frame = cap.read()  # get frame from capture
-    h, w, c = frame.shape
-    black_streak = np.zeros((h, int(w * 0.6), c), dtype=np.uint8)
     while True:
-        _, frame = cap.read()  # get frame from capture
-        process_image(frame)
-        frame = np.concatenate((frame, black_streak, frame), axis=1)
-        if show_window:
-            cv2.imshow('video', frame)
-            cv2.waitKey(1)
-
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', frame)[1].tobytes() + b'\r\n')
+        if output_image is not None:
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', output_image)[1].tobytes() + b'\r\n')
 
 
 # settings
@@ -124,4 +142,6 @@ with open('pkglist.json') as file:
             for pkg in json.JSONDecoder().decode(file.read()).values()]
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    update_output_image_in_background_thread = Thread(target=update_output_image_in_background, daemon=True)
+    update_output_image_in_background_thread.start()
+    app.run(host='0.0.0.0')
