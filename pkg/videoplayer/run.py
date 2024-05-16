@@ -57,9 +57,10 @@ class App(WindowGUI):
                 ret, frame = self.video.read()
                 if not ret:
                     self.is_play = False
-                self.last_time = time.time()
-                h, w, c = frame.shape
-                self.frame = cv2.resize(frame, dsize=(w * (self.win_h + self.h) // h, self.win_h + self.h))
+                else:
+                    self.last_time = time.time()
+                    h, w, c = frame.shape
+                    self.frame = cv2.resize(frame, dsize=(w * (self.win_h + self.h) // h, self.win_h + self.h))
             self.add_img(img, 240, 0, self.frame)
         else:
             self.button(img, 0, self.win_h - 35, 230, 35, 'Play', (0, 255, 0),
