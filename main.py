@@ -119,8 +119,6 @@ def update_output_image_in_background():
         if not ret:
             continue
         cam_image = frame
-        # gui_image = np.zeros((h, w, c + 1), dtype=np.uint8)
-        # process_image(frame)
         if gui_image is not None:
             gui_image_temp = gui_image
             gui_mask = cv2.merge([gui_image_temp[:, :, 3], gui_image_temp[:, :, 3], gui_image_temp[:, :, 3]]) / 255
@@ -128,11 +126,9 @@ def update_output_image_in_background():
         frame = np.concatenate((frame, black_streak, frame), axis=1)
         output_image = frame
         if show_window:
-            cv2.imshow('cam', cam_image)
-            if gui_image is not None:
-                cv2.imshow('gui', gui_image)
+            # if gui_image is not None:
+            #     cv2.imshow('gui', gui_image)
             cv2.imshow('video', frame)
-            # cv2.imshow('gui_mask', gui_mask)
             cv2.waitKey(1)
 
         print('fps: ', round(1 / (time() - last_time), 1))

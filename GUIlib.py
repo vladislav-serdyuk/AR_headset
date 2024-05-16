@@ -132,8 +132,7 @@ class WindowGUI(GUI):
                         line_type)
             cv2.ellipse(overlay, (p4[0] + radius, p4[1] - radius), (radius, radius), 90.0, 0, 90, color, thickness,
                         line_type)
-        # alpha = 0.6
-        # img[:] = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
+
         img[:] = overlay
 
     def text(self, img: np.ndarray, x: int, y: int, text: str, color: tuple[int, int, int],
@@ -152,7 +151,6 @@ class WindowGUI(GUI):
         color = color + (240,)
         overlay = img.copy()
         cv2.putText(overlay, text, (self.x + x, self.y - self.win_h + y), text_fontFace, text_fontScale, color)
-        # alpha = 0.8
         img[:] = overlay
 
     def button(self, img: np.ndarray, x: int, y: int, w: int, h: int, text: str, color: tuple[int, int, int],
