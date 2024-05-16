@@ -33,7 +33,10 @@ hand_detector = HandDetector(staticMode=False,
 app = Flask(__name__)  # server
 cap = cv2.VideoCapture(0)
 app_buffer = []
+cam_image = None
+gui_image = None
 output_image = None
+h, w, c = 0, 0, 0
 
 
 @app.route('/')
@@ -55,10 +58,11 @@ def find_distance(p1: tuple, p2: tuple):
     return max(abs(p1[0] - p2[0]), abs(p1[1] - p2[1]))
 
 
-def process_image(frame: np.ndarray):
+def process_image(frame: np.ndarray, gui_img):
     """
     Распознаёт руки и накладывает на изображение интерфейс
     :param frame: входное изображение
+    :param gui_img: gui
     """
     copy_frame = frame.copy()
     hands = hand_detector.findHands(frame)
@@ -77,7 +81,7 @@ def process_image(frame: np.ndarray):
                 fingers_touch.append(0)
 
         for gui in Apps:
-            gui(frame, fingers_up, fingers_touch, landmark, app_buffer)
+            gui(gui_img, fingers_up, fingers_touch, landmark, app_buffer)
 
         if hand_on_gui:
             min_x = max(bbox[0] - 20, 0)
@@ -88,17 +92,21 @@ def process_image(frame: np.ndarray):
                 segmentor.removeBG(copy_frame[min_y:max_y, min_x:max_x], frame[min_y:max_y, min_x:max_x], 0.3))
 
         if debug:
-            cv2.putText(frame, str(fingers_up), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
-            cv2.putText(frame, f'   {str(fingers_touch)}', (10, 120), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+            cv2.putText(gui_img, str(fingers_up), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255, 255), 3)
+            cv2.putText(gui_img, f'   {str(fingers_touch)}', (10, 120), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255, 255),
+                        3)
             for cx, cy, cz in landmark:
-                cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+                cv2.circle(gui_img, (cx, cy), 5, (255, 0, 255, 255), cv2.FILLED)
     else:
         for gui in Apps:
-            gui(frame, [0] * 5, [0] * 4, [(0, 0)] * 20, app_buffer)
+            gui(gui_img, [0] * 5, [0] * 4, [(0, 0)] * 20, app_buffer)
 
 
 def update_output_image_in_background():
     global output_image
+    global gui_image
+    global cam_image
+    global h, w, c
     ret, frame = cap.read()  # get frame from capture
     if not ret:
         print("can't get frame from capture")
@@ -110,15 +118,34 @@ def update_output_image_in_background():
         ret, frame = cap.read()  # get frame from capture
         if not ret:
             continue
-        process_image(frame)
+        cam_image = frame
+        # gui_image = np.zeros((h, w, c + 1), dtype=np.uint8)
+        # process_image(frame)
+        if gui_image is not None:
+            gui_image_temp = gui_image
+            gui_mask = cv2.merge([gui_image_temp[:, :, 3], gui_image_temp[:, :, 3], gui_image_temp[:, :, 3]]) / 255
+            frame = (frame * (1 - gui_mask) + gui_image_temp[:, :, :3] * gui_mask).astype(dtype=np.uint8)
         frame = np.concatenate((frame, black_streak, frame), axis=1)
         output_image = frame
-
         if show_window:
+            cv2.imshow('cam', cam_image)
+            if gui_image is not None:
+                cv2.imshow('gui', gui_image)
             cv2.imshow('video', frame)
+            # cv2.imshow('gui_mask', gui_mask)
             cv2.waitKey(1)
+
         print('fps: ', round(1 / (time() - last_time), 1))
         last_time = time()
+
+
+def update_gui_image_in_background():
+    global gui_image
+    while True:
+        if cam_image is not None:
+            _gui_image = np.zeros((h, w, c + 1), dtype=np.uint8)
+            process_image(cam_image, _gui_image)
+            gui_image = _gui_image
 
 
 def get_frame():
@@ -144,4 +171,6 @@ with open('pkglist.json') as file:
 if __name__ == '__main__':
     update_output_image_in_background_thread = Thread(target=update_output_image_in_background, daemon=True)
     update_output_image_in_background_thread.start()
+    update_gui_image_in_background_thread = Thread(target=update_gui_image_in_background, daemon=True)
+    update_gui_image_in_background_thread.start()
     app.run(host='0.0.0.0')

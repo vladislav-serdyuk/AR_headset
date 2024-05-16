@@ -81,7 +81,7 @@ class WindowGUI(GUI):
             self.rectangle(img, 0, 0, self.w + 50, self.win_h, self.background_color)
             self.text(img, 10, self.win_h + self.h - 10, self.name, self.title_color)
             cv2.line(img, (self.x + self.w + 15, self.y + self.h // 2),
-                     (self.x + self.w + 35, self.y + self.h // 2), (0, 0, 0), 2)
+                     (self.x + self.w + 35, self.y + self.h // 2), (0, 0, 0, 220), 2)
 
     def rectangle(self, img: np.ndarray, x: int, y: int, w: int, h: int, color: tuple[int, int, int], radius=10,
                   thickness=-1, line_type=cv2.LINE_AA):
@@ -103,6 +103,8 @@ class WindowGUI(GUI):
         #  p1 - p2
         #  |     |
         #  p4 - p3
+
+        color = color + (220,)
 
         topLeft = (self.x + x, self.y - self.win_h + y)
         bottomRight = (self.x + x + w, self.y - self.win_h + y + h)
@@ -130,8 +132,9 @@ class WindowGUI(GUI):
                         line_type)
             cv2.ellipse(overlay, (p4[0] + radius, p4[1] - radius), (radius, radius), 90.0, 0, 90, color, thickness,
                         line_type)
-        alpha = 0.6
-        img[:] = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
+        # alpha = 0.6
+        # img[:] = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
+        img[:] = overlay
 
     def text(self, img: np.ndarray, x: int, y: int, text: str, color: tuple[int, int, int],
              text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
@@ -146,10 +149,11 @@ class WindowGUI(GUI):
         :param text_fontScale: размер
         :return:
         """
+        color = color + (240,)
         overlay = img.copy()
         cv2.putText(overlay, text, (self.x + x, self.y - self.win_h + y), text_fontFace, text_fontScale, color)
-        alpha = 0.8
-        img[:] = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
+        # alpha = 0.8
+        img[:] = overlay
 
     def button(self, img: np.ndarray, x: int, y: int, w: int, h: int, text: str, color: tuple[int, int, int],
                action: typing.Callable[[], None], fingers_touch: list[int], landmark: list[list[int]],
@@ -195,5 +199,8 @@ class WindowGUI(GUI):
         h2, w2, c2 = img2.shape
         abs_x = self.x + x
         abs_y = self.y - self.win_h + y
-        img[max(0, abs_y):abs_y + h2, max(0, abs_x):abs_x + w2] \
+        img[max(0, abs_y):abs_y + h2, max(0, abs_x):abs_x + w2, :3] \
             = img2[max(0, -abs_y):h1 - abs_y, max(0, -abs_x):w1 - abs_x]
+        h, w, c = img[max(0, abs_y):abs_y + h2, max(0, abs_x):abs_x + w2, :3].shape
+        img[max(0, abs_y):abs_y + h2, max(0, abs_x):abs_x + w2, 3] \
+            = np.ones((h, w), dtype=np.uint8) * 255
