@@ -113,7 +113,7 @@ def update_output_image_in_background():
         return
     h, w, c = frame.shape
     black_streak = np.zeros((h, int(w * 0.6), c), dtype=np.uint8)
-    last_time = time()
+    # last_time = time()
     while True:
         ret, frame = cap.read()  # get frame from capture
         if not ret:
@@ -131,8 +131,8 @@ def update_output_image_in_background():
             cv2.imshow('video', frame)
             cv2.waitKey(1)
 
-        print('fps: ', round(1 / (time() - last_time), 1))
-        last_time = time()
+        # print('fps: ', round(1 / (time() - last_time), 1))
+        # last_time = time()
 
 
 def update_gui_image_in_background():
