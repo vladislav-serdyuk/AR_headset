@@ -13,8 +13,8 @@ AR_headset распространяется в надежде, что она б�
 Если это не так, см. <https://www.gnu.org/licenses/>.
 """
 
-import numpy as np
 import cv2
+import numpy as np
 
 from GUIlib import WindowGUI
 
@@ -45,7 +45,8 @@ class App(WindowGUI):
             for i in range(self.win_w):
                 for j in range(self.win_h):
                     if self.art[i][j] == 1:
-                        img[max(min(self.y - self.win_h + i, h - 1), 0)][max(min(self.x + j, w - 1), 0)] = (0, 0, 0)
+                        img[max(min(self.y - self.win_h + i, h - 1), 0)][max(min(self.x + j, w - 1), 0)] = \
+                            (0, 0, 0, 255)
 
     def clean(self):
         self.art = np.zeros((self.win_w, self.win_h))

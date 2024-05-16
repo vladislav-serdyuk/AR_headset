@@ -13,11 +13,10 @@ AR_headset распространяется в надежде, что она б�
 Если это не так, см. <https://www.gnu.org/licenses/>.
 """
 
-from datetime import datetime
 import math
+from datetime import datetime
 
 import cv2
-import numpy as np
 
 from GUIlib import GUI
 
@@ -51,19 +50,19 @@ class App(GUI):
         else:
             self.h = 100
             self.w = 100
-            cv2.circle(img, (self.x + self.w // 2, self.y + self.h // 2), self.h // 2, (255, 255, 255), cv2.FILLED)
+            cv2.circle(img, (self.x + self.w // 2, self.y + self.h // 2), self.h // 2, (255, 255, 255, 255), cv2.FILLED)
 
             cv2.line(img, (self.x + self.w // 2, self.y + self.h // 2),
                      (self.x + int(self.w * (1 + math.sin((now.hour / 6 + now.minute / 360) * math.pi) * 0.7) / 2),
                       self.y + int(self.h * (1 - math.cos((now.hour / 6 + now.minute / 360) * math.pi) * 0.7) / 2)),
-                     (0, 0, 0), thickness=3)
+                     (0, 0, 0, 255), thickness=3)
 
             cv2.line(img, (self.x + self.w // 2, self.y + self.h // 2),
                      (self.x + int(self.w * (1 + math.sin(now.minute * math.pi / 30) * 0.9) / 2),
-                      self.y + int(self.h * (1 - math.cos(now.minute * math.pi / 30) * 0.9) / 2)), (0, 0, 0),
+                      self.y + int(self.h * (1 - math.cos(now.minute * math.pi / 30) * 0.9) / 2)), (0, 0, 0, 255),
                      thickness=2)
 
             cv2.line(img, (self.x + self.w // 2, self.y + self.h // 2),
                      (self.x + int(self.w * (1 + math.sin(now.second * math.pi / 30) * 0.9) / 2),
-                      self.y + int(self.h * (1 - math.cos(now.second * math.pi / 30) * 0.9) / 2)), (0, 0, 255),
+                      self.y + int(self.h * (1 - math.cos(now.second * math.pi / 30) * 0.9) / 2)), (0, 0, 255, 255),
                      thickness=2)
