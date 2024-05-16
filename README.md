@@ -1,5 +1,5 @@
 # AR_headset
-# Ver: 1.0.4
+# Ver: 1.2.0
 ![img](./docs/GUI_exemple.png)
 
 ![GPL](https://www.gnu.org/graphics/gplv3-with-text-136x68.png)
