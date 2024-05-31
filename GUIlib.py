@@ -106,12 +106,12 @@ class WindowGUI(GUI):
 
         color = color + (220,)
 
-        topLeft = (self.x + x, self.y - self.win_h + y)
-        bottomRight = (self.x + x + w, self.y - self.win_h + y + h)
-        p1 = topLeft
-        p2 = (bottomRight[0], topLeft[1])
-        p3 = bottomRight
-        p4 = (topLeft[0], bottomRight[1])
+        top_left = (self.x + x, self.y - self.win_h + y)
+        bottom_right = (self.x + x + w, self.y - self.win_h + y + h)
+        p1 = top_left
+        p2 = (bottom_right[0], top_left[1])
+        p3 = bottom_right
+        p4 = (top_left[0], bottom_right[1])
 
         overlay = img.copy()
         if thickness < 0:  # // draw rectangle
@@ -136,7 +136,7 @@ class WindowGUI(GUI):
         img[:] = overlay
 
     def text(self, img: np.ndarray, x: int, y: int, text: str, color: tuple[int, int, int],
-             text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
+             text_font_face=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_font_scale=1):
         """
         Рисует текст
         :param img: где рисовать
@@ -144,18 +144,18 @@ class WindowGUI(GUI):
         :param y: y координата нижней левой точки
         :param text: текст
         :param color: цвет
-        :param text_fontFace: шрифт
-        :param text_fontScale: размер
+        :param text_font_face: шрифт
+        :param text_font_scale: размер
         :return:
         """
         color = color + (240,)
         overlay = img.copy()
-        cv2.putText(overlay, text, (self.x + x, self.y - self.win_h + y), text_fontFace, text_fontScale, color)
+        cv2.putText(overlay, text, (self.x + x, self.y - self.win_h + y), text_font_face, text_font_scale, color)
         img[:] = overlay
 
     def button(self, img: np.ndarray, x: int, y: int, w: int, h: int, text: str, color: tuple[int, int, int],
                action: typing.Callable[[], None], fingers_touch: list[int], landmark: list[list[int]],
-               text_color=(0, 0, 0), text_fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_fontScale=1):
+               text_color=(0, 0, 0), text_font_face=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_font_scale=1):
         """
         Рисует кнопку
         :param img: где рисовать
@@ -169,14 +169,14 @@ class WindowGUI(GUI):
         :param fingers_touch: list[int]
         :param landmark: list[list[int]]
         :param text_color: цвет текста
-        :param text_fontFace: шрифт
-        :param text_fontScale: размер
+        :param text_font_face: шрифт
+        :param text_font_scale: размер
         :return:
         """
         global _pressed_button
         self.rectangle(img, x, y, w, h, color)
-        self.text(img, x + 10, y + h - 10, text, text_color,
-                  text_fontFace=text_fontFace, text_fontScale=text_fontScale)
+        self.text(img, x + 10, y + h - 10, text, text_color, text_font_face=text_font_face,
+                  text_font_scale=text_font_scale)
         if not fingers_touch[0]:
             _pressed_button = False
         elif (not _pressed_button and (self.x + x <= landmark[4][0] <= self.x + x + w)
