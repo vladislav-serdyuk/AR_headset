@@ -44,9 +44,9 @@ class App(GUI):
         if self.dig:
             self.h = 45
             self.w = 215
-            cv2.rectangle(img, (self.x, self.y), (self.x + self.w, self.y + self.h), (255, 255, 255), cv2.FILLED)
+            cv2.rectangle(img, (self.x, self.y), (self.x + self.w, self.y + self.h), (255, 255, 255, 255), cv2.FILLED)
             cv2.putText(img, now.strftime('%H:%M:%S'), (self.x, self.y + self.h - 5),
-                        cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+                        cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255, 255), 3)
         else:
             self.h = 100
             self.w = 100
