@@ -15,24 +15,35 @@ AR_headset распространяется в надежде, что она б�
 
 import zipfile
 import json
-import os
 import shutil
 
 
 def install_pkg(file_name: str):
+    with open('pkglist.json') as file:
+        print('READ: pkglist.json')
+        pkg_list = json.JSONDecoder().decode(file.read())
+
+    print(f'READ: {file_name}')
     with zipfile.ZipFile(file_name) as zip_file:
+        print(f'READ: {file_name}/pkg_data.json')
         with zip_file.open('pkg_data.json') as data_file:
             pkg_meta_data = json.JSONDecoder().decode(data_file.read().decode())
+
+            if pkg_meta_data['name'] in pkg_list:
+                ans = input('pkg is installed, update or cansel? u/c')
+                if ans == 'u':
+                    pass
+                elif ans == 'c':
+                    return
+                else:
+                    print('bad command: run "cansel"')
+                    return
 
         for file in zip_file.infolist():
             if file.filename.startswith('files/'):
                 print(f'EXTRACT: {file.filename}')
                 file.filename = 'pkg/' + pkg_meta_data['dir'] + file.filename.replace('files', '', 1)
                 zip_file.extract(file)
-
-    with open('pkglist.json') as file:
-        print('READ: pkglist.json')
-        pkg_list = json.JSONDecoder().decode(file.read())
 
     pkg_list[pkg_meta_data['name']] = {'dir': pkg_meta_data['dir'], 'info': pkg_meta_data['info']}
 
@@ -57,17 +68,17 @@ def delete_pkg(pkg_name: str):
 
 def main():
     while True:
-        cmd = input('> ')
+        cmd = input('entry command: install, delete or quit? i/d/q > ')
         if cmd == 'i':
-            param = input('? ')
+            param = input('entry file name ? ')
             install_pkg(param)
         elif cmd == 'd':
-            param = input('? ')
+            param = input('entry pkg name ? ')
             delete_pkg(param)
         elif cmd == 'q':
             break
         else:
-            print('err')
+            print('bad command')
 
 
 if __name__ == '__main__':
