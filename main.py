@@ -16,7 +16,7 @@ AR_headset распространяется в надежде, что она б�
 import json
 import importlib
 from threading import Thread
-from time import time
+# from time import time
 
 import cv2
 import numpy as np
@@ -32,10 +32,10 @@ hand_detector = HandDetector(staticMode=False,
                              minTrackCon=0.5)
 app = Flask(__name__)  # server
 cap = cv2.VideoCapture(0)
-app_buffer = []
-cam_image = None
-gui_image = None
-output_image = None
+app_buffer: list[str] = []
+cam_image: np.ndarray | None = None
+gui_image: np.ndarray | None = None
+output_image: np.ndarray | None = None
 h, w, c = 0, 0, 0
 
 
@@ -140,6 +140,7 @@ def update_gui_image_in_background():
     while True:
         if cam_image is not None:
             _gui_image = np.zeros((h, w, c + 1), dtype=np.uint8)
+            # noinspection PyTypeChecker
             process_image(cam_image, _gui_image)
             gui_image = _gui_image
 
