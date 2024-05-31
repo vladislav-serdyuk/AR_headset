@@ -17,30 +17,30 @@ import cv2
 import mediapipe as mp
 
 
-def fingersUp(myHand):
+def fingers_up(my_hand):
     """
     Finds how many fingers are open and returns in a list.
     Considers left and right hands separately
     :return: List of which fingers are up
     """
     fingers = []
-    myHandType = myHand["type"]
-    myLmList = myHand["lmList"]
+    my_hand_type = my_hand["type"]
+    my_lm_list = my_hand["lmList"]
     # Thumb
-    if myHandType == "Right":
-        if myLmList[4][0] > myLmList[3][0]:
+    if my_hand_type == "Right":
+        if my_lm_list[4][0] > my_lm_list[3][0]:
             fingers.append(1)
         else:
             fingers.append(0)
     else:
-        if myLmList[4][0] < myLmList[3][0]:
+        if my_lm_list[4][0] < my_lm_list[3][0]:
             fingers.append(1)
         else:
             fingers.append(0)
 
     # 4 Fingers
     for _id in range(1, 5):
-        if myLmList[[4, 8, 12, 16, 20][_id]][1] < myLmList[[4, 8, 12, 16, 20][_id] - 2][1]:
+        if my_lm_list[[4, 8, 12, 16, 20][_id]][1] < my_lm_list[[4, 8, 12, 16, 20][_id] - 2][1]:
             fingers.append(1)
         else:
             fingers.append(0)
@@ -55,59 +55,60 @@ class HandDetector:
     provides bounding box info of the hand found.
     """
 
-    def __init__(self, staticMode=False, maxHands=2, modelComplexity=1, detectionCon=0.5, minTrackCon=0.5):
+    def __init__(self, static_mode=False, max_hands=2, model_complexity=1, detection_con=0.5, min_track_con=0.5):
 
         """
-        :param mode: In static mode, detection is done on each image: slower
-        :param maxHands: Maximum number of hands to detect
-        :param modelComplexity: Complexity of the hand landmark model: 0 or 1.
-        :param detectionCon: Minimum Detection Confidence Threshold
-        :param minTrackCon: Minimum Tracking Confidence Threshold
+        :param static_mode: In static mode, detection is done on each image: slower
+        :param max_hands: Maximum number of hands to detect
+        :param model_complexity: Complexity of the hand landmark model: 0 or 1.
+        :param detection_con: Minimum Detection Confidence Threshold
+        :param min_track_con: Minimum Tracking Confidence Threshold
         """
-        self.hands = mp.solutions.hands.Hands(static_image_mode=staticMode,
-                                              max_num_hands=maxHands,
-                                              model_complexity=modelComplexity,
-                                              min_detection_confidence=detectionCon,
-                                              min_tracking_confidence=minTrackCon)
+        self.hands = mp.solutions.hands.Hands(static_image_mode=static_mode,
+                                              max_num_hands=max_hands,
+                                              model_complexity=model_complexity,
+                                              min_detection_confidence=detection_con,
+                                              min_tracking_confidence=min_track_con)
 
-    def findHands(self, img):
+    def find_hands(self, img):
         """
         Finds hands in a BGR image.
         :param img: Image to find the hands in.
         :return: Hands info
         """
-        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        results = self.hands.process(imgRGB)
-        allHands = []
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        results = self.hands.process(img_rgb)
+        all_hands = []
         h, w, c = img.shape
+
         if results.multi_hand_landmarks:
             for handType, handLms in zip(results.multi_handedness, results.multi_hand_landmarks):
-                myHand = {}
+                my_hand = {}
                 # lmList
-                mylmList = []
-                xList = []
-                yList = []
+                my_lm_list = []
+                x_list = []
+                y_list = []
                 for lm in handLms.landmark:
                     px, py, pz = int(lm.x * w), int(lm.y * h), int(lm.z * w)
-                    mylmList.append([px, py, pz])
-                    xList.append(px)
-                    yList.append(py)
+                    my_lm_list.append([px, py, pz])
+                    x_list.append(px)
+                    y_list.append(py)
 
-                myHand["lmList"] = mylmList
+                my_hand["lmList"] = my_lm_list
 
                 # bbox
-                xmin, xmax = min(xList), max(xList)
-                ymin, ymax = min(yList), max(yList)
-                boxW, boxH = xmax - xmin, ymax - ymin
-                myHand["bbox"] = xmin, ymin, boxW, boxH
+                xmin, xmax = min(x_list), max(x_list)
+                ymin, ymax = min(y_list), max(y_list)
+                box_w, box_h = xmax - xmin, ymax - ymin
+                my_hand["bbox"] = xmin, ymin, box_w, box_h
 
                 if handType.classification[0].label == "Right":
-                    myHand["type"] = "Left"
+                    my_hand["type"] = "Left"
                 else:
-                    myHand["type"] = "Right"
+                    my_hand["type"] = "Right"
 
-                myHand["fingersUp"] = fingersUp(myHand)
+                my_hand["fingersUp"] = fingers_up(my_hand)
 
-                allHands.append(myHand)
+                all_hands.append(my_hand)
 
-        return allHands
+        return all_hands
