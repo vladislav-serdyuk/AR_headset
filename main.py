@@ -25,11 +25,11 @@ from HandTrackingModule import HandDetector
 from flask import Flask, render_template, Response
 
 segmentor = SelfiSegmentation(model=1)  # remove background
-hand_detector = HandDetector(staticMode=False,
-                             maxHands=1,
-                             modelComplexity=1,
-                             detectionCon=0.7,
-                             minTrackCon=0.5)
+hand_detector = HandDetector(static_mode=False,
+                             max_hands=1,
+                             model_complexity=1,
+                             detection_con=0.7,
+                             min_track_con=0.5)
 app = Flask(__name__)  # server
 cap = cv2.VideoCapture(0)
 app_buffer: list[str] = []
@@ -65,7 +65,7 @@ def process_image(frame: np.ndarray, gui_img):
     :param gui_img: gui
     """
     copy_frame = frame.copy()
-    hands = hand_detector.findHands(frame)
+    hands = hand_detector.find_hands(frame)
     if hands:
         hand1 = hands[0]  # Get the first hand detected
         landmark = hand1["lmList"]  # List of 21 landmarks for the first hand
