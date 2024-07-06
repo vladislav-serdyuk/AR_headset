@@ -33,10 +33,14 @@ hand_detector = HandDetector(static_mode=False,
 app = Flask(__name__)  # server
 cap = cv2.VideoCapture(0)
 app_buffer: list[str] = []
+message: list[str] = ['']
 cam_image: np.ndarray | None = None
 gui_image: np.ndarray | None = None
-output_image: np.ndarray | None = None
+result_image: np.ndarray | None = None
 h, w, c = 0, 0, 0
+fingers_touch = [0] * 4
+fingers_up = [0] * 5
+landmark = [(0, 0)] * 21
 
 
 @app.route('/')
@@ -58,30 +62,30 @@ def find_distance(p1: tuple, p2: tuple):
     return max(abs(p1[0] - p2[0]), abs(p1[1] - p2[1]))
 
 
-def process_image(frame: np.ndarray, gui_img):
+def render_gui(frame: np.ndarray):
+    global gui_image
     """
     Распознаёт руки и накладывает на изображение интерфейс
     :param frame: входное изображение
-    :param gui_img: gui
     """
+    gui_img = np.zeros((h, w, c + 1), dtype=np.uint8)
     copy_frame = frame.copy()
     hands = hand_detector.find_hands(frame)
     if hands:
         hand1 = hands[0]  # Get the first hand detected
-        landmark = hand1["lmList"]  # List of 21 landmarks for the first hand
+        landmark[:] = hand1["lmList"]  # List of 21 landmarks for the first hand
         bbox = hand1["bbox"]  # Bounding box around the first hand (x,y,w,h coordinates)
-        fingers_up = hand1["fingersUp"]
+        fingers_up[:] = hand1["fingersUp"]
 
-        fingers_touch = []
-        for tip_id in [8, 12, 16, 20]:
+        for _i, tip_id in enumerate([8, 12, 16, 20]):
             distance = find_distance(landmark[4][0:2], landmark[tip_id][0:2])
             if distance < 30:
-                fingers_touch.append(1)
+                fingers_touch[_i] = 1
             else:
-                fingers_touch.append(0)
+                fingers_touch[_i] = 0
 
         for gui in Apps:
-            gui(gui_img, fingers_up, fingers_touch, landmark, app_buffer)
+            gui(gui_img)
 
         if hand_on_gui:
             min_x = max(bbox[0] - 20, 0)
@@ -99,11 +103,23 @@ def process_image(frame: np.ndarray, gui_img):
                 cv2.circle(gui_img, (cx, cy), 5, (255, 0, 255, 255), cv2.FILLED)
     else:
         for gui in Apps:
-            gui(gui_img, [0] * 5, [0] * 4, [(0, 0)] * 20, app_buffer)
+            gui(gui_img)
+    gui_image = gui_img
+    process_message_for_system()
 
 
-def update_output_image_in_background():
-    global output_image
+def process_message_for_system():
+    cmd, *arg = message[0].split(':', maxsplit=1)
+    if cmd == 'window-top':
+        win = int(arg[0])
+        pos = windows_positions[win]
+        windows_positions[win], windows_positions[Apps[-1].id] = len(Apps) - 1,  pos
+        Apps[-1], Apps[pos] = Apps[pos], Apps[-1]
+        message[0] = ''
+
+
+def update_result_image_in_background():
+    global result_image
     global gui_image
     global cam_image
     global h, w, c
@@ -121,10 +137,11 @@ def update_output_image_in_background():
         cam_image = frame
         if gui_image is not None:
             gui_image_temp = gui_image
-            gui_mask = cv2.merge([gui_image_temp[:, :, 3], gui_image_temp[:, :, 3], gui_image_temp[:, :, 3]]) / 255
+            alpha = gui_image_temp[:, :, 3]
+            gui_mask = cv2.merge([alpha, alpha, alpha]) / 255
             frame = (frame * (1 - gui_mask) + gui_image_temp[:, :, :3] * gui_mask).astype(dtype=np.uint8)
         frame = np.concatenate((frame, black_streak, frame), axis=1)
-        output_image = frame
+        result_image = frame
         if show_window:
             # if gui_image is not None:
             #     cv2.imshow('gui', gui_image)
@@ -136,13 +153,10 @@ def update_output_image_in_background():
 
 
 def update_gui_image_in_background():
-    global gui_image
     while True:
         if cam_image is not None:
-            _gui_image = np.zeros((h, w, c + 1), dtype=np.uint8)
             # noinspection PyTypeChecker
-            process_image(cam_image, _gui_image)
-            gui_image = _gui_image
+            render_gui(cam_image)
 
 
 def get_frame():
@@ -151,9 +165,10 @@ def get_frame():
         :return: Generator[bytes, Any, None]
     """
     while True:
-        if output_image is not None:
+        if result_image is not None:
+            # noinspection PyTypeChecker
             yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', output_image)[1].tobytes() + b'\r\n')
+                   b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', result_image)[1].tobytes() + b'\r\n')
 
 
 # settings
@@ -162,11 +177,15 @@ hand_on_gui = True
 show_window = True
 
 with open('pkglist.json') as file:
-    Apps = [importlib.import_module('pkg.' + pkg['dir'] + '.run').App()
+    Apps = [importlib.import_module('pkg.' + pkg['dir'] + '.run').App(fingers_up, fingers_touch, app_buffer, message,
+                                                                      landmark)
             for pkg in json.JSONDecoder().decode(file.read()).values()]
+    windows_positions = {}
+    for i, _app in enumerate(Apps):
+        windows_positions[_app.id] = i
 
 if __name__ == '__main__':
-    update_output_image_in_background_thread = Thread(target=update_output_image_in_background, daemon=True)
+    update_output_image_in_background_thread = Thread(target=update_result_image_in_background, daemon=True)
     update_output_image_in_background_thread.start()
     update_gui_image_in_background_thread = Thread(target=update_gui_image_in_background, daemon=True)
     update_gui_image_in_background_thread.start()

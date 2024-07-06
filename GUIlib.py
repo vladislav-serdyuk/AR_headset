@@ -23,65 +23,98 @@ _window_track = False
 
 
 class GUI:
-    def __init__(self):  # setup position
-        self.h = 50
-        self.w = 50
+    """
+    Класс для создания простого GUI объекта
+    """
+
+    def __init__(self, fingers_up: list[int], fingers_touch: list[int],
+                 buffer: list[str], message: list[str], landmark: list[list[int]]):  # setup position
+        self.height_moving_area = 50
+        self.width_moving_area = 50
         self.x = 10
         self.y = 10
         self._track = False
         self._track_x = 0
         self._track_y = 0
+        self.name = 'base gui'
+        self.id = id(self)
+        self.buffer = buffer
+        self.message = message
+        self.fingers_up = fingers_up
+        self.fingers_touch = fingers_touch
+        self.landmark = landmark
 
-    def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
-                 buffer: list[str]):  # track finger
-        if landmark[0] == (0, 0):
+    def __call__(self, img: np.ndarray):  # track finger
+        if self.landmark[0] == (0, 0):
             return
         global _window_track
-        if fingers_touch[0] == 0:
+        if self.fingers_touch[0] == 0:
             self._track = False
             _window_track = False
         elif self._track:
-            self.x = landmark[8][0] - self._track_x
-            self.y = landmark[8][1] - self._track_y
-        elif (not _window_track and self.x <= landmark[8][0] <= self.x + self.w
-              and self.y <= landmark[8][1] <= self.y + self.h):
-            self._track_x = landmark[8][0] - self.x
-            self._track_y = landmark[8][1] - self.y
+            self.x = self.landmark[8][0] - self._track_x
+            self.y = self.landmark[8][1] - self._track_y
+        elif (not _window_track and self.x <= self.landmark[8][0] <= self.x + self.width_moving_area
+              and self.y <= self.landmark[8][1] <= self.y + self.height_moving_area):
+            self._track_x = self.landmark[8][0] - self.x
+            self._track_y = self.landmark[8][1] - self.y
             self._track = True
             _window_track = True
+            self.message[0] = f'window-top:{self.id}'
+
+    def write_char_to_buffer(self, char: str):
+        self.buffer.append(char)
+
+    def read_char_from_buffer(self):
+        return self.buffer.pop(0)
+
+    def send_message(self, message):
+        self.message[0] = message
+
+    def read_message(self):
+        return self.message[0]
+
+    def set_message_as_read(self):
+        self.message[0] = ''
 
 
 class WindowGUI(GUI):
-    def __init__(self):
-        super().__init__()
-        self.hide = True
+    """
+    Класс для создания оконного приложения
+    """
+
+    def __init__(self, fingers_up: list[int], fingers_touch: list[int],
+                 buffer: list[str], message: list[str], landmark: list[list[int]]):
+        super().__init__(fingers_up, fingers_touch, buffer, message, landmark)
+        self.hide = True  # является ли окно скрытым
         self.background_color = (255, 255, 255)
-        self.name = 'window'
+        self.name = 'window'  # имя окна
         self.title_color = (0, 0, 0)
-        self.win_h = 100
-        self.win_w = 210
-        self.h = 30
-        self.w = self.win_w - 50
-        self.x = 200
+        self.windows_height = 100
+        self.window_width = 210
+        self.height_moving_area = 30
+        self.width_moving_area = self.window_width - 50
+        self.x = 200  # координаты нижнего левого угла
         self.y = 400
 
-    def __call__(self, img: np.ndarray, fingers_up: list[int], fingers_touch: list[int], landmark: list[list[int]],
-                 buffer: list[str]):
+    def __call__(self, img: np.ndarray):
         if self.hide:
-            if buffer and buffer[-1] == f'open:{self.name}':
-                buffer.pop()
+            if self.read_message() == f'open:{self.name}':
+                self.set_message_as_read()
+                self.send_message(f'window-top:{self.id}')
                 self.hide = False
         else:
-            self.w = self.win_w - 50
-            if (self.x + self.w <= landmark[8][0] <= self.x + self.win_w and self.y <= landmark[8][1] <= self.y + self.h
-                    and fingers_touch[0]):
+            self.width_moving_area = self.window_width - 50
+            if (self.x + self.width_moving_area <= self.landmark[8][0] <= self.x + self.window_width
+                    and self.y <= self.landmark[8][1] <= self.y + self.height_moving_area and self.fingers_touch[0]):
                 self.hide = True
-            super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
-            self.rectangle(img, 0, 0, self.w + 50, self.win_h + self.h, self.background_color)
-            self.rectangle(img, 0, 0, self.w + 50, self.win_h, self.background_color)
-            self.text(img, 10, self.win_h + self.h - 10, self.name, self.title_color)
-            cv2.line(img, (self.x + self.w + 15, self.y + self.h // 2),
-                     (self.x + self.w + 35, self.y + self.h // 2), (0, 0, 0, 220), 2)
+            super().__call__(img)
+            self.rectangle(img, 0, 0, self.window_width, self.windows_height + self.height_moving_area,
+                           self.background_color)
+            self.rectangle(img, 0, 0, self.window_width, self.windows_height, self.background_color)
+            self.text(img, 10, self.windows_height + self.height_moving_area - 10, self.name, self.title_color)
+            cv2.line(img, (self.x + self.width_moving_area + 15, self.y + self.height_moving_area // 2),
+                     (self.x + self.width_moving_area + 35, self.y + self.height_moving_area // 2), (0, 0, 0, 220), 2)
 
     def rectangle(self, img: np.ndarray, x: int, y: int, w: int, h: int, color: tuple[int, int, int], radius=10,
                   thickness=-1, line_type=cv2.LINE_AA):
@@ -93,8 +126,8 @@ class WindowGUI(GUI):
         :param w: ширина
         :param h: высота
         :param color: цвет
-        :param radius: закругление углов
-        :param thickness: толщина
+        :param radius: радиус закругления углов
+        :param thickness: толщина линии (-1 == fill)
         :param line_type: тип линии
         :return:
         """
@@ -106,8 +139,8 @@ class WindowGUI(GUI):
 
         color = color + (220,)
 
-        top_left = (self.x + x, self.y - self.win_h + y)
-        bottom_right = (self.x + x + w, self.y - self.win_h + y + h)
+        top_left = (self.x + x, self.y - self.windows_height + y)
+        bottom_right = (self.x + x + w, self.y - self.windows_height + y + h)
         p1 = top_left
         p2 = (bottom_right[0], top_left[1])
         p3 = bottom_right
@@ -143,34 +176,35 @@ class WindowGUI(GUI):
         :param x: x координата нижней левой точки
         :param y: y координата нижней левой точки
         :param text: текст
-        :param color: цвет
-        :param text_font_face: шрифт
-        :param text_font_scale: размер
+        :param color: цвет текста
+        :param text_font_face: шрифт текста
+        :param text_font_scale: размер текста
         :return:
         """
         color = color + (240,)
         overlay = img.copy()
-        cv2.putText(overlay, text, (self.x + x, self.y - self.win_h + y), text_font_face, text_font_scale, color)
+        cv2.putText(overlay, text, (self.x + x, self.y - self.windows_height + y), text_font_face, text_font_scale,
+                    color)
         img[:] = overlay
 
     def button(self, img: np.ndarray, x: int, y: int, w: int, h: int, text: str, color: tuple[int, int, int],
-               action: typing.Callable[[], None], fingers_touch: list[int], landmark: list[list[int]],
-               text_color=(0, 0, 0), text_font_face=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_font_scale=1):
+               action: typing.Callable[[], None], text_color=(0, 0, 0), text_font_face=cv2.FONT_HERSHEY_COMPLEX_SMALL,
+               text_font_scale=1):
+        fingers_touch = self.fingers_touch
+        landmark = self.landmark
         """
         Рисует кнопку
         :param img: где рисовать
-        :param x: x координата верхний правой точки
-        :param y: y координата верхний правой точки
+        :param x: x координата верхний левой точки
+        :param y: y координата верхний левой точки
         :param w: ширина
         :param h: высота
         :param text: текст
-        :param color: цвет
-        :param action: действие при нажатии
-        :param fingers_touch: list[int]
-        :param landmark: list[list[int]]
+        :param color: цвет фона
+        :param action: действие при нажатии (функция)
         :param text_color: цвет текста
-        :param text_font_face: шрифт
-        :param text_font_scale: размер
+        :param text_font_face: шрифт текста
+        :param text_font_scale: размер текста
         :return:
         """
         global _pressed_button
@@ -180,7 +214,7 @@ class WindowGUI(GUI):
         if not fingers_touch[0]:
             _pressed_button = False
         elif (not _pressed_button and (self.x + x <= landmark[4][0] <= self.x + x + w)
-              and (self.y - self.win_h + y <= landmark[4][1] <= self.y - self.win_h + y + h)):
+              and (self.y - self.windows_height + y <= landmark[4][1] <= self.y - self.windows_height + y + h)):
             _pressed_button = True
             action()
 
@@ -196,7 +230,7 @@ class WindowGUI(GUI):
         h1, w1, c1 = img.shape
         h2, w2, c2 = img2.shape
         abs_x = self.x + x
-        abs_y = self.y - self.win_h + y
+        abs_y = self.y - self.windows_height + y
         img[max(0, abs_y):abs_y + h2, max(0, abs_x):abs_x + w2, :3] \
             = img2[max(0, -abs_y):h1 - abs_y, max(0, -abs_x):w1 - abs_x]
         h, w, c = img[max(0, abs_y):abs_y + h2, max(0, abs_x):abs_x + w2, :3].shape

@@ -15,8 +15,6 @@ AR_headset распространяется в надежде, что она б�
 
 import os
 
-import numpy as np
-import cv2
 import sounddevice as sd
 import soundfile as sf
 
@@ -24,10 +22,11 @@ from GUIlib import WindowGUI
 
 
 class App(WindowGUI):
-    def __init__(self):
-        super().__init__()
-        self.win_h = 200
-        self.win_w = 400
+    def __init__(self, fingers_up: list[int], fingers_touch: list[int],
+                 buffer: list[str], message: list[str], landmark: list[list[int]]):
+        super().__init__(fingers_up, fingers_touch, buffer, message, landmark)
+        self.windows_height = 200
+        self.window_width = 400
         self.name = 'Audio player'
         self.audio_formats = ['mp3', 'wav']
         audio_files = []
@@ -38,23 +37,20 @@ class App(WindowGUI):
         self.select = ''
         self.is_play = False
 
-    def __call__(self, img, fingers_up, fingers_touch, landmark, buffer: list):
-        super().__call__(img, fingers_up, fingers_touch, landmark, buffer)
+    def __call__(self, img):
+        super().__call__(img)
         if self.hide:
             return
 
         for i, file in enumerate(self.audio_files):
-            self.button(img, 0, i * 40, 200, 35, file, (200, 255, 200),
-                        lambda f=file: self.set_select(f), fingers_touch, landmark)
+            self.button(img, 0, i * 40, 200, 35, file, (200, 255, 200), lambda f=file: self.set_select(f))
 
         self.text(img, 210, 30, self.select, (0, 0, 0))
 
         if self.is_play:
-            self.button(img, 200, self.win_h-35, 200, 35, 'Stop', (0, 0, 255),
-                        lambda: self.stop(), fingers_touch, landmark)
+            self.button(img, 200, self.windows_height - 35, 200, 35, 'Stop', (0, 0, 255), lambda: self.stop())
         else:
-            self.button(img, 200, self.win_h - 35, 200, 35, 'Play', (0, 255, 0),
-                        lambda: self.play(), fingers_touch, landmark)
+            self.button(img, 200, self.windows_height - 35, 200, 35, 'Play', (0, 255, 0), lambda: self.play())
 
     def set_select(self, file):
         self.select = file
