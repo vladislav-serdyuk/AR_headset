@@ -1,4 +1,5 @@
 # AR headset soft v1.3.0
+![logo](docs/logo.svg)
 
 ![img](./docs/GUI_exemple.png)
 
@@ -6,9 +7,16 @@
 
 ## Настройка
 - Установите зависимости (pip install -r requirements.txt)
+```commandline
+pip install -r requirements.txt
+```
 - Измените templates/index.html | div > img > width так, чтобы расстояние между картинками было равно 6см
 
 ## Использование
+Запуск:
+```commandline
+python main.py
+```
 ### Часы
 Зажмите большой с указательным, чтобы передвигать
 
@@ -38,6 +46,9 @@ m = минуты
 
 #### Установка и удаление
 Запустите pkgmgr.py
+```commandline
+python pkgmgr.py
+```
 
 Сначала введите
 i - install, d - delete, q - quit
