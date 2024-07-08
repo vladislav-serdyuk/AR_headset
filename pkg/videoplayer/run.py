@@ -52,7 +52,8 @@ class App(WindowGUI):
 
         if self.is_play:
             self.button(img, 0, self.windows_height - 35, 230, 35, 'Stop', (0, 0, 255), lambda: self.stop())
-            if time.time() >= self.last_time + 1/25 or self.frame is None:
+            fps = self.video.get(cv2.CAP_PROP_FPS)
+            if time.time() >= self.last_time + 1/fps or self.frame is None:
                 ret, frame = self.video.read()
                 if not ret:
                     self.is_play = False
