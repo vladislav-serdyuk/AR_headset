@@ -5,3 +5,4 @@ Flask~=3.0.2
 mediapipe~=0.10.11
 sounddevice~=0.4.6
 soundfile~=0.12.1
+ffpyplayer~=4.5.1

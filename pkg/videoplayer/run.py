@@ -17,6 +17,7 @@ import os
 import time
 
 import cv2
+from ffpyplayer.player import MediaPlayer
 
 from GUIlib import WindowGUI
 
@@ -37,8 +38,9 @@ class App(WindowGUI):
         self.select = ''
         self.is_play = False
         self.video: None | cv2.VideoCapture = None
-        self.last_time = time.time()
+        self.new_time = time.time()
         self.frame = None
+        self.player = None
 
     def __call__(self, img):
         super().__call__(img)
@@ -53,12 +55,12 @@ class App(WindowGUI):
         if self.is_play:
             self.button(img, 0, self.windows_height - 35, 230, 35, 'Stop', (0, 0, 255), lambda: self.stop())
             fps = self.video.get(cv2.CAP_PROP_FPS)
-            if time.time() >= self.last_time + 1/fps or self.frame is None:
+            if time.time() >= self.new_time or self.frame is None:
+                self.new_time += 1 / fps
                 ret, frame = self.video.read()
                 if not ret:
                     self.is_play = False
                 else:
-                    self.last_time = time.time()
                     h, w, c = frame.shape
                     self.frame = cv2.resize(frame, dsize=(w * (self.windows_height + self.height_moving_area) // h,
                                                           self.windows_height + self.height_moving_area))
@@ -74,6 +76,9 @@ class App(WindowGUI):
             return
         self.is_play = True
         self.video = cv2.VideoCapture(f'video/{self.select}')
+        self.player = MediaPlayer(f'video/{self.select}')
+        self.new_time = time.time()
 
     def stop(self):
         self.is_play = False
+        self.player.close_player()
