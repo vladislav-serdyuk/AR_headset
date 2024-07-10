@@ -44,6 +44,17 @@ class App(WindowGUI):
 
     def __call__(self, img):
         super().__call__(img)
+        if self.is_play and time.time() >= self.new_time:
+            fps = self.video.get(cv2.CAP_PROP_FPS)
+            self.new_time += 1 / fps
+            ret, frame = self.video.read()
+            if not ret:
+                self.stop()
+            else:
+                h, w, c = frame.shape
+                self.frame = cv2.resize(frame, dsize=(w * (self.windows_height + self.height_moving_area) // h,
+                                                      self.windows_height + self.height_moving_area))
+
         if self.hide:
             return
 
@@ -54,16 +65,6 @@ class App(WindowGUI):
 
         if self.is_play:
             self.button(img, 0, self.windows_height - 35, 230, 35, 'Stop', (0, 0, 255), lambda: self.stop())
-            fps = self.video.get(cv2.CAP_PROP_FPS)
-            if time.time() >= self.new_time or self.frame is None:
-                self.new_time += 1 / fps
-                ret, frame = self.video.read()
-                if not ret:
-                    self.is_play = False
-                else:
-                    h, w, c = frame.shape
-                    self.frame = cv2.resize(frame, dsize=(w * (self.windows_height + self.height_moving_area) // h,
-                                                          self.windows_height + self.height_moving_area))
             self.add_img(img, 240, 0, self.frame)
         else:
             self.button(img, 0, self.windows_height - 35, 230, 35, 'Play', (0, 255, 0), lambda: self.play())
