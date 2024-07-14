@@ -31,6 +31,7 @@ class App(GUI):
         self.width_moving_area = 50
         self.dig = False
         self.t_pre = 0
+        self.name = '_Clock'
 
     def __call__(self, img):
         super().__call__(img)

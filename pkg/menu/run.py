@@ -26,13 +26,13 @@ class App(WindowGUI):
         self.y = 130
         self.windows_height = 0
         self.window_width = 0
-        self.name = 'Menu'
+        self.name = '_Menu'
         self.apps = []
         with open('pkglist.json') as file:
             pkg_list: dict = json.JSONDecoder().decode(file.read())
         for app in pkg_list.values():
             name = app["info"]
-            if name not in ['Menu', 'Clock']:
+            if name[0] != '_':
                 self.apps.append(name)
 
     def __call__(self, img):

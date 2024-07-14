@@ -137,7 +137,7 @@ class WindowGUI(GUI):
         #  |     |
         #  p4 - p3
 
-        color = color + (220,)
+        color = color + (170,)
 
         top_left = (self.x + x, self.y - self.windows_height + y)
         bottom_right = (self.x + x + w, self.y - self.windows_height + y + h)
@@ -181,7 +181,7 @@ class WindowGUI(GUI):
         :param text_font_scale: размер текста
         :return:
         """
-        color = color + (240,)
+        color = color + (255,)
         overlay = img.copy()
         cv2.putText(overlay, text, (self.x + x, self.y - self.windows_height + y), text_font_face, text_font_scale,
                     color)

@@ -87,6 +87,9 @@ class App(WindowGUI):
         super().__call__(img)  # обработка перемещения
         ...
 ```
+Если хотите чтобы приложение не было видно в меню: pkg_data["info"] = self.name = '_app-name'
+(начинается с _)
+
 Для дальнейшего создания приложения используйте [GUI app framework](GUI_app_framework.md)
 
 Доп файлы пихайте в ./files/

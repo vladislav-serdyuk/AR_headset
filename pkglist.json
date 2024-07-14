@@ -1,10 +1,12 @@
 {
-  "clock": {"dir": "clock", "info": "Clock"},
-  "paint": {"dir": "paint", "info": "Paint"},
-  "keyboard": {"dir": "keyboard", "info": "Keyboard"},
-  "calc": {"dir": "calc", "info": "Calculator"},
-  "timer": {"dir": "timer", "info":  "Timer"},
-  "audio_player": {"dir":  "audioplayer", "info": "Audio player"},
-  "video_player": {"dir": "videoplayer", "info": "Video player"},
-  "sys_app_menu": {"dir":  "menu", "info": "Menu"}
+  "sys_app_menu": {"dir": "menu", "info": "_Menu", "description":  ""},
+  "clock": {"dir": "clock", "info": "_Clock", "description":  "Clock widget"},
+  "paint": {"dir": "paint", "info": "Paint", "description":  "Art in AR"},
+  "keyboard": {"dir": "keyboard", "info": "Keyboard", "description":  "Print text in AR"},
+  "calc": {"dir": "calc", "info": "Calculator", "description":  "Simple calculator"},
+  "timer": {"dir": "timer", "info":  "Timer", "description":  "Timer"},
+  "audio_player": {"dir":  "audioplayer", "info": "Audio player", "description":  "Audio player"},
+  "video_player": {"dir": "videoplayer", "info": "Video player", "description":  "Video player"},
+  "app_installer": {"dir":  "app_installer", "info": "App installer", "description":  "Apps installer"},
+  "app_remover": {"dir":  "app_remover", "info": "App remover", "description":  "Apps remover"}
 }

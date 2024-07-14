@@ -18,7 +18,7 @@ import json
 import shutil
 
 
-def install_pkg(file_name: str):
+def install_pkg(file_name: str, skip_question=False):
     with open('pkglist.json') as file:
         print('READ: pkglist.json')
         pkg_list = json.JSONDecoder().decode(file.read())
@@ -27,13 +27,17 @@ def install_pkg(file_name: str):
     with zipfile.ZipFile(file_name) as zip_file:
         print(f'READ: {file_name}/pkg_data.json')
         with zip_file.open('pkg_data.json') as data_file:
-            pkg_meta_data = json.JSONDecoder().decode(data_file.read().decode())
+            pkg_meta_data: dict[str, str] = json.JSONDecoder().decode(data_file.read().decode())
 
             if pkg_meta_data['name'] in pkg_list:
-                ans = input('pkg is installed, update or cansel? u/c')
-                if ans == 'u':
-                    pass
-                elif ans == 'c':
+                ask = 'u'
+                if not skip_question:
+                    ask = input('pkg is installed, update or cansel? u/c: ')
+                if ask == 'u':
+                    print('selected update pkg')
+                    print('run deleting pkg')
+                    delete_pkg(pkg_meta_data['name'])
+                elif ask == 'c':
                     return
                 else:
                     print('bad command: run "cansel"')
@@ -45,11 +49,14 @@ def install_pkg(file_name: str):
                 file.filename = 'pkg/' + pkg_meta_data['dir'] + file.filename.replace('files', '', 1)
                 zip_file.extract(file)
 
-    pkg_list[pkg_meta_data['name']] = {'dir': pkg_meta_data['dir'], 'info': pkg_meta_data['info']}
+    pkg_list[pkg_meta_data['name']] = {'dir': pkg_meta_data['dir'], 'info': pkg_meta_data['info'],
+                                       'description': pkg_meta_data.get('description', 'Unknown')}
 
     with open('pkglist.json', 'w') as file:
         print('UPDATE: pkglist.json')
         file.write(json.JSONEncoder().encode(pkg_list))
+
+    print('install(update) pkg successful')
 
 
 def delete_pkg(pkg_name: str):
@@ -64,6 +71,7 @@ def delete_pkg(pkg_name: str):
     with open('pkglist.json', 'w') as file:
         print('UPDATE: pkglist.json')
         file.write(json.JSONEncoder().encode(pkg_list))
+    print('delete pkg successful')
 
 
 def main():

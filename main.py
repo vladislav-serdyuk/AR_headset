@@ -41,6 +41,8 @@ h, w, c = 0, 0, 0
 fingers_touch = [0] * 4
 fingers_up = [0] * 5
 landmark = [(0, 0)] * 21
+Apps = []
+windows_positions = {}
 
 
 @app.route('/')
@@ -85,15 +87,27 @@ def render_gui(frame: np.ndarray):
                 fingers_touch[_i] = 0
 
         for gui in Apps:
-            gui(gui_img)
+            try:
+                gui(gui_img)
+            except Exception as e:
+                print('ERROR in app')
+                print(e)
 
         if hand_on_gui:
             min_x = max(bbox[0] - 20, 0)
             max_x = bbox[0] + bbox[2] + 20
             min_y = max(bbox[1] - 20, 0)
             max_y = bbox[1] + bbox[3] + 20
-            frame[min_y:max_y, min_x:max_x] = (
-                segmentor.removeBG(copy_frame[min_y:max_y, min_x:max_x], frame[min_y:max_y, min_x:max_x], 0.3))
+            # frame[min_y:max_y, min_x:max_x] = (
+            #     segmentor.removeBG(copy_frame[min_y:max_y, min_x:max_x], frame[min_y:max_y, min_x:max_x], 0.3))
+            # cv2.imshow('hand', segmentor.removeBG(copy_frame[min_y:max_y, min_x:max_x],
+            #                                       cv2.cvtColor(gui_img[min_y:max_y, min_x:max_x], cv2.COLOR_BGRA2BGR),
+            #                                       0.3))
+            # cv2.waitKey(1)
+            gui_img[min_y:max_y, min_x:max_x, :3] = segmentor.removeBG(copy_frame[min_y:max_y, min_x:max_x],
+                                                                       cv2.cvtColor(gui_img[min_y:max_y, min_x:max_x],
+                                                                                    cv2.COLOR_BGRA2BGR),
+                                                                       0.3)
 
         if debug:
             cv2.putText(gui_img, str(fingers_up), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255, 255), 3)
@@ -103,7 +117,11 @@ def render_gui(frame: np.ndarray):
                 cv2.circle(gui_img, (cx, cy), 5, (255, 0, 255, 255), cv2.FILLED)
     else:
         for gui in Apps:
-            gui(gui_img)
+            try:
+                gui(gui_img)
+            except Exception as e:
+                print('ERROR in app')
+                print(e)
     gui_image = gui_img
     process_message_for_system()
 
@@ -113,8 +131,12 @@ def process_message_for_system():
     if cmd == 'window-top':
         win = int(arg[0])
         pos = windows_positions[win]
-        windows_positions[win], windows_positions[Apps[-1].id] = len(Apps) - 1,  pos
+        windows_positions[win], windows_positions[Apps[-1].id] = len(Apps) - 1, pos
         Apps[-1], Apps[pos] = Apps[pos], Apps[-1]
+        message[0] = ''
+    elif cmd == 'reload-apps':
+        print('reload apps')
+        load_apps()
         message[0] = ''
 
 
@@ -171,20 +193,24 @@ def get_frame():
                    b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', result_image)[1].tobytes() + b'\r\n')
 
 
-# settings
-debug = True
-hand_on_gui = True
-show_window = True
-
-with open('pkglist.json') as file:
-    Apps = [importlib.import_module('pkg.' + pkg['dir'] + '.run').App(fingers_up, fingers_touch, app_buffer, message,
+def load_apps():
+    with open('pkglist.json') as file:
+        Apps[:] = [
+            importlib.import_module('pkg.' + pkg['dir'] + '.run').App(fingers_up, fingers_touch, app_buffer, message,
                                                                       landmark)
             for pkg in json.JSONDecoder().decode(file.read()).values()]
-    windows_positions = {}
-    for i, _app in enumerate(Apps):
-        windows_positions[_app.id] = i
+        windows_positions.clear()
+        for i, _app in enumerate(Apps):
+            windows_positions[_app.id] = i
+
+
+# settings
+debug = True
+hand_on_gui = False
+show_window = True
 
 if __name__ == '__main__':
+    load_apps()
     update_output_image_in_background_thread = Thread(target=update_result_image_in_background, daemon=True)
     update_output_image_in_background_thread.start()
     update_gui_image_in_background_thread = Thread(target=update_gui_image_in_background, daemon=True)
