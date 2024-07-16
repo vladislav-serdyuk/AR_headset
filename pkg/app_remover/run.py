@@ -44,17 +44,17 @@ class App(WindowGUI):
         if self.pkg_list is not None:
             for i, (name, value) in enumerate(self.pkg_list.items()):
                 x = i % 3 * 185 + 5
-                y = i // 3 * 45 + 5
-                self.button(img, x, y, 180, 40, value['info'], (220, 255, 0),
-                            lambda: self.select(name))
+                y = i // 3 * 35 + 5
+                self.button(img, x, y, 180, 30, value['info'], (220, 255, 0),
+                            lambda: self.select(name), text_font_scale=0.9)
         # self.button(img, 5, self.windows_height - 45, 200, 40, 'refresh', (200, 200, 200), self.refresh)
 
         if self.cur_pkg is not None:
             self.text(img, 5, self.windows_height - 20, self.pkg_list[self.cur_pkg]['info'], (0, 0, 0))
             if self.delete_status == '':
-                self.button(img, 165, self.windows_height - 45, 100, 40, 'Delete', (0, 0, 255), self.start_delete_pkg)
+                self.button(img, 180, self.windows_height - 40, 100, 35, 'Delete', (0, 0, 255), self.start_delete_pkg)
             else:
-                self.text(img, 185, self.windows_height - 20, self.delete_status, (0, 0, 255))
+                self.text(img, 200, self.windows_height - 20, self.delete_status, (0, 0, 255))
 
     def select(self, pkg: str):
         self.cur_pkg = pkg

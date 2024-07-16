@@ -31,7 +31,13 @@ hand_detector = HandDetector(static_mode=False,
                              detection_con=0.7,
                              min_track_con=0.5)
 app = Flask(__name__)  # server
-cap = cv2.VideoCapture(0)
+index = 0
+while True:  # auto search webcam
+    cap = cv2.VideoCapture(index)
+    if cap.read()[0]:
+        break
+    index += 1
+# cap = cv2.VideoCapture(0)
 app_buffer: list[str] = []
 message: list[str] = ['']
 cam_image: np.ndarray | None = None

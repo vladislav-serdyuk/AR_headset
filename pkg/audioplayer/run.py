@@ -25,10 +25,10 @@ class App(WindowGUI):
     def __init__(self, fingers_up: list[int], fingers_touch: list[int],
                  buffer: list[str], message: list[str], landmark: list[list[int]]):
         super().__init__(fingers_up, fingers_touch, buffer, message, landmark)
-        self.windows_height = 200
-        self.window_width = 400
+        self.windows_height = 340
+        self.window_width = 430
         self.name = 'Audio player'
-        self.audio_formats = ['mp3', 'wav']
+        self.audio_formats = ['mp3', 'wav', 'flac', 'ogg']
         audio_files = []
         for file in os.listdir('audio'):
             if file.rsplit('.', 1)[1] in self.audio_formats:
@@ -43,14 +43,14 @@ class App(WindowGUI):
             return
 
         for i, file in enumerate(self.audio_files):
-            self.button(img, 0, i * 40, 200, 35, file, (200, 255, 200), lambda f=file: self.set_select(f))
+            self.button(img, 5, i * 35 + 5, 200, 30, file, (200, 255, 200), lambda f=file: self.set_select(f))
 
         self.text(img, 210, 30, self.select, (0, 0, 0))
 
         if self.is_play:
-            self.button(img, 200, self.windows_height - 35, 200, 35, 'Stop', (0, 0, 255), lambda: self.stop())
+            self.button(img, 200, self.windows_height - 35, 225, 35, 'Stop', (0, 0, 255), lambda: self.stop())
         else:
-            self.button(img, 200, self.windows_height - 35, 200, 35, 'Play', (0, 255, 0), lambda: self.play())
+            self.button(img, 200, self.windows_height - 35, 225, 35, 'Play', (0, 255, 0), lambda: self.play())
 
     def set_select(self, file):
         self.select = file

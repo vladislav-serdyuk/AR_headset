@@ -26,8 +26,8 @@ class App(WindowGUI):
     def __init__(self, fingers_up: list[int], fingers_touch: list[int],
                  buffer: list[str], message: list[str], landmark: list[list[int]]):
         super().__init__(fingers_up, fingers_touch, buffer, message, landmark)
-        self.windows_height = 300
-        self.window_width = 230
+        self.windows_height = 340
+        self.window_width = 250
         self.name = 'Video player'
         self.video_formats = ['mp4']
         video_files = []
@@ -59,15 +59,18 @@ class App(WindowGUI):
             return
 
         for i, file in enumerate(self.video_files):
-            self.button(img, 0, i * 40, 230, 35, file, (200, 255, 200), lambda f=file: self.set_select(f))
+            self.button(img, 5, i * 35 + 5, self.window_width - 10, 30, file, (200, 255, 200),
+                        lambda f=file: self.set_select(f))
 
         self.text(img, 10, self.windows_height - 60, self.select, (0, 0, 0))
 
         if self.is_play:
-            self.button(img, 0, self.windows_height - 35, 230, 35, 'Stop', (0, 0, 255), lambda: self.stop())
-            self.add_img(img, 240, 0, self.frame)
+            self.button(img, 5, self.windows_height - 35, self.window_width - 10, 35, 'Stop', (0, 0, 255),
+                        lambda: self.stop())
+            self.add_img(img, self.window_width + 5, 0, self.frame)
         else:
-            self.button(img, 0, self.windows_height - 35, 230, 35, 'Play', (0, 255, 0), lambda: self.play())
+            self.button(img, 5, self.windows_height - 35, self.window_width - 10, 35, 'Play', (0, 255, 0),
+                        lambda: self.play())
 
     def set_select(self, file):
         self.select = file
