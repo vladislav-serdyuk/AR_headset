@@ -36,6 +36,7 @@ while True:  # auto search webcam
     cap = cv2.VideoCapture(index)
     if cap.read()[0]:
         break
+    cap.release()
     index += 1
 # cap = cv2.VideoCapture(0)
 app_buffer: list[str] = []
