@@ -48,26 +48,33 @@ class App(WindowGUI):
             fps = self.video.get(cv2.CAP_PROP_FPS)
             self.new_time += 1 / fps
             ret, frame = self.video.read()
+            while time.time() >= self.new_time:
+                self.new_time += 1 / fps
+                ret, frame = self.video.read()
             if not ret:
                 self.stop()
             else:
                 h, w, c = frame.shape
-                self.frame = cv2.resize(frame, dsize=(w * (self.windows_height + self.height_moving_area) // h,
-                                                      self.windows_height + self.height_moving_area))
+                new_h = self.windows_height - 35
+                new_w = w * new_h // h
+                self.window_width = new_w
+                self.frame = cv2.resize(frame, dsize=(new_w, new_h))
 
         if self.hide:
             return
 
-        for i, file in enumerate(self.video_files):
-            self.button(img, 5, i * 35 + 5, self.window_width - 10, 30, file, (200, 255, 200),
-                        lambda f=file: self.set_select(f))
-
-        self.text(img, 10, self.windows_height - 60, self.select, (0, 0, 0))
+        if self.is_play:
+            pass
+        else:
+            for i, file in enumerate(self.video_files):
+                self.button(img, 5, i * 35 + 5, self.window_width - 10, 30, file, (200, 255, 200),
+                            lambda f=file: self.set_select(f))
+            self.text(img, 10, self.windows_height - 60, self.select, (0, 0, 0))
 
         if self.is_play:
             self.button(img, 5, self.windows_height - 35, self.window_width - 10, 35, 'Stop', (0, 0, 255),
                         lambda: self.stop())
-            self.add_img(img, self.window_width + 5, 0, self.frame)
+            self.add_img(img, 0, 0, self.frame)
         else:
             self.button(img, 5, self.windows_height - 35, self.window_width - 10, 35, 'Play', (0, 255, 0),
                         lambda: self.play())
@@ -86,3 +93,4 @@ class App(WindowGUI):
     def stop(self):
         self.is_play = False
         self.player.close_player()
+        self.window_width = 250
