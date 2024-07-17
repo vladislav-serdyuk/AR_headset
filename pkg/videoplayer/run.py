@@ -29,7 +29,7 @@ class App(WindowGUI):
         self.windows_height = 340
         self.window_width = 250
         self.name = 'Video player'
-        self.video_formats = ['mp4', '']
+        self.video_formats = ['mp4', 'avi', 'mov', 'mpg', 'wmv']
         video_files = []
         for file in os.listdir('video'):
             if file.rsplit('.', 1)[1] in self.video_formats:
