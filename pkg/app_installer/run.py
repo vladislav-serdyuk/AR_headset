@@ -152,7 +152,7 @@ class App(WindowGUI):
         #      'zip_file': 'Video player/Video player.zip', 'download_size': 1831, 'install_size': None},
         #     {'name': '_Clock', 'description': 'Clock widget', 'dir_on_github': '_Clock',
         #      'zip_file': '_Clock/_Clock.zip', 'download_size': 1692, 'install_size': None},
-        #     {'name': '_Menu', 'description': '', 'dir_on_github': '_Menu',
+        #     {'name': '_Menu', 'description': 'Main apps menu', 'dir_on_github': '_Menu',
         #      'zip_file': '_Menu/_Menu.zip', 'download_size': 1572, 'install_size': None}
         # ]
         self.refresh_status = ''
