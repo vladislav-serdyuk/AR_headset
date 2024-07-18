@@ -161,6 +161,7 @@ def update_result_image_in_background():
     # last_time = time()
     while True:
         ret, frame = cap.read()  # get frame from capture
+        # frame = cv2.flip(frame, 1)
         if not ret:
             continue
         cam_image = frame
@@ -218,8 +219,8 @@ show_window = True
 
 if __name__ == '__main__':
     load_apps()
-    update_output_image_in_background_thread = Thread(target=update_result_image_in_background, daemon=True)
-    update_output_image_in_background_thread.start()
+    update_result_image_in_background_thread = Thread(target=update_result_image_in_background, daemon=True)
+    update_result_image_in_background_thread.start()
     update_gui_image_in_background_thread = Thread(target=update_gui_image_in_background, daemon=True)
     update_gui_image_in_background_thread.start()
     app.run(host='0.0.0.0')

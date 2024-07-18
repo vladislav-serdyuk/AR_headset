@@ -34,6 +34,7 @@ class App(WindowGUI):
         self.pkg_list: dict[str, dict[str, str]] = {}
         self.cur_pkg: str | None = None
         self.delete_status = ''
+        self.ignore_pkgs_list = ['sys_app_menu', 'app_installer', 'app_remover']
 
         self.refresh()
 
@@ -71,3 +72,6 @@ class App(WindowGUI):
     def refresh(self):
         with open('pkglist.json') as file:
             self.pkg_list = JSONDecoder().decode(file.read())
+        for ign_pkg in self.ignore_pkgs_list:
+            if ign_pkg in self.pkg_list:
+                del self.pkg_list[ign_pkg]

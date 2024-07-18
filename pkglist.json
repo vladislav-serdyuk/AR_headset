@@ -1,5 +1,5 @@
 {
-  "sys_app_menu": {"dir": "menu", "info": "_Menu", "description":  ""},
+  "sys_app_menu": {"dir": "menu", "info": "_Menu", "description":  "Main apps menu"},
   "clock": {"dir": "clock", "info": "_Clock", "description":  "Clock widget"},
   "paint": {"dir": "paint", "info": "Paint", "description":  "Art in AR"},
   "keyboard": {"dir": "keyboard", "info": "Keyboard", "description":  "Print text in AR"},

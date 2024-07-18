@@ -127,34 +127,34 @@ class App(WindowGUI):
         threading.Thread(target=self.refresh_in_bg).start()
 
     def refresh_in_bg(self):
-        # self.pkg_list = get_pkg_list()
+        self.pkg_list = get_pkg_list()
         # print(self.pkg_list)
         # for i in range(500_000_000):
         #     ...
-        self.pkg_list = [
-            {'name': 'App installer', 'description': 'Apps installer', 'dir_on_github': 'App installer',
-             'zip_file': 'App installer/App installer.zip', 'download_size': 2801, 'install_size': None},
-            {'name': 'App remover', 'description': 'Apps remover', 'dir_on_github': 'App remover',
-             'zip_file': 'App remover/App remover.zip', 'download_size': 1847, 'install_size': None},
-            {'name': 'Audio player', 'description': 'Audio player', 'dir_on_github': 'Audio player',
-             'zip_file': 'Audio player/Audio player.zip', 'download_size': 1604, 'install_size': None},
-            {'name': 'Calc Pro', 'description': 'Improved version of the calculator', 'dir_on_github': 'Calc Pro',
-             'zip_file': 'Calc Pro/Calc Pro.zip', 'download_size': 1683, 'install_size': None},
-            {'name': 'Calculator', 'description': 'Simple calculator', 'dir_on_github': 'Calculator',
-             'zip_file': 'Calculator/Calculator.zip', 'download_size': 1515, 'install_size': None},
-            {'name': 'Keyboard', 'description': 'Print text in AR', 'dir_on_github': 'Keyboard',
-             'zip_file': 'Keyboard/Keyboard.zip', 'download_size': 1431, 'install_size': None},
-            {'name': 'Paint', 'description': 'Art in AR', 'dir_on_github': 'Paint',
-             'zip_file': 'Paint/Paint.zip', 'download_size': 1548, 'install_size': None},
-            {'name': 'Timer', 'description': 'Timer', 'dir_on_github': 'Timer',
-             'zip_file': 'Timer/Timer.zip', 'download_size': 37039, 'install_size': None},
-            {'name': 'Video player', 'description': 'Video player', 'dir_on_github': 'Video player',
-             'zip_file': 'Video player/Video player.zip', 'download_size': 1831, 'install_size': None},
-            {'name': '_Clock', 'description': 'Clock widget', 'dir_on_github': '_Clock',
-             'zip_file': '_Clock/_Clock.zip', 'download_size': 1692, 'install_size': None},
-            {'name': '_Menu', 'description': '', 'dir_on_github': '_Menu',
-             'zip_file': '_Menu/_Menu.zip', 'download_size': 1572, 'install_size': None}
-        ]
+        # self.pkg_list = [
+        #     {'name': 'App installer', 'description': 'Apps installer', 'dir_on_github': 'App installer',
+        #      'zip_file': 'App installer/App installer.zip', 'download_size': 2801, 'install_size': None},
+        #     {'name': 'App remover', 'description': 'Apps remover', 'dir_on_github': 'App remover',
+        #      'zip_file': 'App remover/App remover.zip', 'download_size': 1847, 'install_size': None},
+        #     {'name': 'Audio player', 'description': 'Audio player', 'dir_on_github': 'Audio player',
+        #      'zip_file': 'Audio player/Audio player.zip', 'download_size': 1604, 'install_size': None},
+        #     {'name': 'Calc Pro', 'description': 'Improved version of the calculator', 'dir_on_github': 'Calc Pro',
+        #      'zip_file': 'Calc Pro/Calc Pro.zip', 'download_size': 1683, 'install_size': None},
+        #     {'name': 'Calculator', 'description': 'Simple calculator', 'dir_on_github': 'Calculator',
+        #      'zip_file': 'Calculator/Calculator.zip', 'download_size': 1515, 'install_size': None},
+        #     {'name': 'Keyboard', 'description': 'Print text in AR', 'dir_on_github': 'Keyboard',
+        #      'zip_file': 'Keyboard/Keyboard.zip', 'download_size': 1431, 'install_size': None},
+        #     {'name': 'Paint', 'description': 'Art in AR', 'dir_on_github': 'Paint',
+        #      'zip_file': 'Paint/Paint.zip', 'download_size': 1548, 'install_size': None},
+        #     {'name': 'Timer', 'description': 'Timer', 'dir_on_github': 'Timer',
+        #      'zip_file': 'Timer/Timer.zip', 'download_size': 37039, 'install_size': None},
+        #     {'name': 'Video player', 'description': 'Video player', 'dir_on_github': 'Video player',
+        #      'zip_file': 'Video player/Video player.zip', 'download_size': 1831, 'install_size': None},
+        #     {'name': '_Clock', 'description': 'Clock widget', 'dir_on_github': '_Clock',
+        #      'zip_file': '_Clock/_Clock.zip', 'download_size': 1692, 'install_size': None},
+        #     {'name': '_Menu', 'description': '', 'dir_on_github': '_Menu',
+        #      'zip_file': '_Menu/_Menu.zip', 'download_size': 1572, 'install_size': None}
+        # ]
         self.refresh_status = ''
 
     def start_install_pkg(self):
