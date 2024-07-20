@@ -1,4 +1,4 @@
-# AR headset soft v1.4.2
+# AR headset soft v1.5.0
 ![logo](docs/logo.svg)
 
 ![img](./docs/GUI_exemple.png)
