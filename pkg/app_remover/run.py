@@ -26,7 +26,7 @@ class App(WindowGUI):
     def __init__(self, fingers_up: list[int], fingers_touch: list[int],
                  buffer: list[str], message: list[str], landmark: list[list[int]]):
         super().__init__(fingers_up, fingers_touch, buffer, message, landmark)
-        self.name = 'App remover'  # имя окна
+        self.name = 'Удаление'  # имя окна
         self.windows_height = 300  # высота окна
         self.window_width = 560  # ширина окна
         self.x = 200  # координаты нижнего левого угла
@@ -47,13 +47,13 @@ class App(WindowGUI):
                 x = i % 3 * 185 + 5
                 y = i // 3 * 35 + 5
                 self.button(img, x, y, 180, 30, value['info'], (220, 255, 0),
-                            lambda: self.select(name), text_font_scale=0.9)
+                            lambda: self.select(name), text_font_scale=0.7)
         # self.button(img, 5, self.windows_height - 45, 200, 40, 'refresh', (200, 200, 200), self.refresh)
 
         if self.cur_pkg is not None:
             self.text(img, 5, self.windows_height - 20, self.pkg_list[self.cur_pkg]['info'], (0, 0, 0))
             if self.delete_status == '':
-                self.button(img, 180, self.windows_height - 40, 100, 35, 'Delete', (0, 0, 255), self.start_delete_pkg)
+                self.button(img, 180, self.windows_height - 40, 130, 35, 'Удалить', (0, 0, 255), self.start_delete_pkg)
             else:
                 self.text(img, 200, self.windows_height - 20, self.delete_status, (0, 0, 255))
 
@@ -61,7 +61,7 @@ class App(WindowGUI):
         self.cur_pkg = pkg
 
     def start_delete_pkg(self):
-        self.delete_status = 'deleting'
+        self.delete_status = 'Удаление'
         threading.Thread(target=self.delete, daemon=True).start()
 
     def delete(self):
@@ -70,7 +70,7 @@ class App(WindowGUI):
         self.send_message('reload-apps')
 
     def refresh(self):
-        with open('pkglist.json') as file:
+        with open('pkglist.json', encoding='utf-8') as file:
             self.pkg_list = JSONDecoder().decode(file.read())
         for ign_pkg in self.ignore_pkgs_list:
             if ign_pkg in self.pkg_list:

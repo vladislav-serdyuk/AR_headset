@@ -169,7 +169,7 @@ class WindowGUI(GUI):
         img[:] = overlay
 
     def text(self, img: np.ndarray, x: int, y: int, text: str, color: tuple[int, int, int],
-             text_font_face=cv2.FONT_HERSHEY_COMPLEX_SMALL, text_font_scale=1):
+             text_font_face=cv2.FONT_HERSHEY_COMPLEX, text_font_scale=0.75):
         """
         Рисует текст
         :param img: где рисовать
@@ -184,12 +184,12 @@ class WindowGUI(GUI):
         color = color + (255,)
         overlay = img.copy()
         cv2.putText(overlay, text, (self.x + x, self.y - self.windows_height + y), text_font_face, text_font_scale,
-                    color)
+                    color, lineType=cv2.LINE_AA)
         img[:] = overlay
 
     def button(self, img: np.ndarray, x: int, y: int, w: int, h: int, text: str, color: tuple[int, int, int],
-               action: typing.Callable[[], None], text_color=(0, 0, 0), text_font_face=cv2.FONT_HERSHEY_COMPLEX_SMALL,
-               text_font_scale=1):
+               action: typing.Callable[[], None], text_color=(0, 0, 0), text_font_face=cv2.FONT_HERSHEY_COMPLEX,
+               text_font_scale=0.73):
         fingers_touch = self.fingers_touch
         landmark = self.landmark
         """

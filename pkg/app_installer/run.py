@@ -71,7 +71,7 @@ class App(WindowGUI):
     def __init__(self, fingers_up: list[int], fingers_touch: list[int],
                  buffer: list[str], message: list[str], landmark: list[list[int]]):
         super().__init__(fingers_up, fingers_touch, buffer, message, landmark)
-        self.name = 'App installer'  # имя окна
+        self.name = 'Установщик'  # имя окна
         self.windows_height = 420  # высота окна
         self.window_width = 460  # ширина окна
         self.x = 200  # координаты нижнего левого угла
@@ -88,9 +88,9 @@ class App(WindowGUI):
         if self.pkg_list is not None:
             for i, item in enumerate(self.pkg_list):
                 self.button(img, 5, i * 30 + 5, 200, 25, item['name'], (220, 255, 0),
-                            lambda: self.select(item), text_font_scale=0.9)
+                            lambda: self.select(item), text_font_scale=0.6)
         if self.refresh_status == '':
-            self.button(img, 5, self.windows_height - 35, 200, 30, 'refresh', (200, 200, 200),
+            self.button(img, 5, self.windows_height - 35, 200, 30, 'Обновить данн', (200, 200, 200),
                         self.refresh)
         else:
             self.text(img, 10, self.windows_height - 20, self.refresh_status, (50, 50, 50))
@@ -98,7 +98,7 @@ class App(WindowGUI):
         if self.cur_pkg is not None:
             self.text(img, 240, 35, self.cur_pkg['name'], (0, 0, 0))
 
-            self.text(img, 220, 70, 'Information:', (0, 0, 0))
+            self.text(img, 220, 70, 'Информация:', (0, 0, 0))
             description_word = self.cur_pkg['description'].split()
             line = ''
             line_num = 0
@@ -111,11 +111,11 @@ class App(WindowGUI):
                     line_num += 1
             self.text(img, 220, 110 + line_num * 30, line, (0, 0, 0))
             self.text(img, 215, self.windows_height - 60,
-                      f'download size:{convert_to_kb_mb_gb(self.cur_pkg["download_size"], 1)}',
+                      f'Размер скч:{convert_to_kb_mb_gb(self.cur_pkg["download_size"], 1)}',
                       (0, 0, 0),
-                      text_font_scale=0.9)
+                      text_font_scale=0.6)
             if self.install_status == '':
-                self.button(img, 215, self.windows_height - 45, 240, 40, 'Install', (0, 255, 0), self.start_install_pkg)
+                self.button(img, 215, self.windows_height - 45, 240, 40, 'Установить', (0, 255, 0), self.start_install_pkg)
             else:
                 self.text(img, 220, self.windows_height - 20, self.install_status, (0, 0, 255))
 
@@ -123,7 +123,7 @@ class App(WindowGUI):
         self.cur_pkg = pkg
 
     def refresh(self):
-        self.refresh_status = 'refreshing'
+        self.refresh_status = 'Обновление списка'
         threading.Thread(target=self.refresh_in_bg).start()
 
     def refresh_in_bg(self):

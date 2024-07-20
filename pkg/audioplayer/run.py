@@ -27,7 +27,7 @@ class App(WindowGUI):
         super().__init__(fingers_up, fingers_touch, buffer, message, landmark)
         self.windows_height = 340
         self.window_width = 430
-        self.name = 'Audio player'
+        self.name = 'АудиоПлейер'
         self.audio_formats = ['mp3', 'wav', 'flac', 'ogg']
         audio_files = []
         for file in os.listdir('audio'):
@@ -48,9 +48,9 @@ class App(WindowGUI):
         self.text(img, 210, 30, self.select, (0, 0, 0))
 
         if self.is_play:
-            self.button(img, 200, self.windows_height - 35, 225, 35, 'Stop', (0, 0, 255), lambda: self.stop())
+            self.button(img, 200, self.windows_height - 35, 225, 35, 'Стоп', (0, 0, 255), lambda: self.stop())
         else:
-            self.button(img, 200, self.windows_height - 35, 225, 35, 'Play', (0, 255, 0), lambda: self.play())
+            self.button(img, 200, self.windows_height - 35, 225, 35, 'Старт', (0, 255, 0), lambda: self.play())
 
     def set_select(self, file):
         self.select = file

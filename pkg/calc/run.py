@@ -23,7 +23,7 @@ class App(WindowGUI):
         super().__init__(fingers_up, fingers_touch, buffer, message, landmark)
         self.windows_height = 215
         self.window_width = 175
-        self.name = 'Calculator'
+        self.name = 'Калькулятор'
         self.expression = ''
 
     def __call__(self, img):

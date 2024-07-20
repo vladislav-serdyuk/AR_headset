@@ -36,11 +36,6 @@ python main.py
 
 Чтобы стереть, нажмите на красный квадрат
 
-### Timer
-h = часы
-
-m = минуты
-
 ### Пакеты
 Вы можете их найти в этом репозитории https://github.com/vladislav-serdyuk/AR_headset_pkgs
 

@@ -1,12 +1,12 @@
 {
-  "sys_app_menu": {"dir": "menu", "info": "_Menu", "description":  "Main apps menu"},
-  "clock": {"dir": "clock", "info": "_Clock", "description":  "Clock widget"},
-  "paint": {"dir": "paint", "info": "Paint", "description":  "Art in AR"},
-  "keyboard": {"dir": "keyboard", "info": "Keyboard", "description":  "Print text in AR"},
-  "calc": {"dir": "calc", "info": "Calculator", "description":  "Simple calculator"},
-  "timer": {"dir": "timer", "info":  "Timer", "description":  "Timer"},
-  "audio_player": {"dir":  "audioplayer", "info": "Audio player", "description":  "Audio player"},
-  "video_player": {"dir": "videoplayer", "info": "Video player", "description":  "Video player"},
-  "app_installer": {"dir":  "app_installer", "info": "App installer", "description":  "Apps installer"},
-  "app_remover": {"dir":  "app_remover", "info": "App remover", "description":  "Apps remover"}
+  "sys_app_menu": {"dir": "menu", "info": "_Menu", "description":  "Основное меню приложений"},
+  "clock": {"dir": "clock", "info": "_Clock", "description":  "Виджет часов"},
+  "paint": {"dir": "paint", "info": "Paint", "description":  "Рисование в AR"},
+  "keyboard": {"dir": "keyboard", "info": "Клавиатура", "description":  "Набор текста в AR"},
+  "calc": {"dir": "calc", "info": "Калькулятор", "description":  "Простой калькулятор"},
+  "timer": {"dir": "timer", "info":  "Таймер", "description":  "Таймер"},
+  "audio_player": {"dir":  "audioplayer", "info": "Аудио плеер", "description":  "Аудио плеер"},
+  "video_player": {"dir": "videoplayer", "info": "Видео плеер", "description":  "Видео плеер"},
+  "app_installer": {"dir":  "app_installer", "info": "Установщик", "description":  "Установщик приложений"},
+  "app_remover": {"dir":  "app_remover", "info": "Удаление", "description":  "Удаление приложений"}
 }

@@ -20,6 +20,7 @@ import cv2
 from ffpyplayer.player import MediaPlayer
 
 from GUIlib import WindowGUI
+from pkg.videoplayer.videoplayer_module import VideoPlayer
 
 
 class App(WindowGUI):
@@ -28,7 +29,7 @@ class App(WindowGUI):
         super().__init__(fingers_up, fingers_touch, buffer, message, landmark)
         self.windows_height = 340
         self.window_width = 250
-        self.name = 'Video player'
+        self.name = 'ВидеоПлейер'
         self.video_formats = ['mp4', 'avi', 'mov', 'mpg', 'wmv']
         video_files = []
         for file in os.listdir('video'):
@@ -37,23 +38,32 @@ class App(WindowGUI):
         self.video_files = video_files
         self.select = ''
         self.is_play = False
-        self.video: None | cv2.VideoCapture = None
-        self.new_time = time.time()
+        # self.video: None | cv2.VideoCapture = None
+        # self.new_time = time.time()
         self.frame = None
-        self.player = None
+        # self.player: MediaPlayer | None = None
+        self.player: VideoPlayer | None = None
 
     def __call__(self, img):
         super().__call__(img)
-        if self.is_play and time.time() >= self.new_time:
-            fps = self.video.get(cv2.CAP_PROP_FPS)
-            self.new_time += 1 / fps
-            ret, frame = self.video.read()
-            while time.time() >= self.new_time:
-                self.new_time += 1 / fps
-                ret, frame = self.video.read()
-            if not ret:
-                self.stop()
-            else:
+        # if self.is_play and time.time() >= self.new_time:
+            # fps = self.video.get(cv2.CAP_PROP_FPS)
+            # self.new_time += 1 / fps
+            # ret, frame = self.video.read()
+            # while time.time() >= self.new_time:
+            #     self.new_time += 1 / fps
+            #     ret, frame = self.video.read()
+            # if not ret:
+            #     self.stop()
+            # else:
+            #     h, w, c = frame.shape
+            #     new_h = self.windows_height - 35
+            #     new_w = w * new_h // h
+            #     self.window_width = new_w
+            #     self.frame = cv2.resize(frame, dsize=(new_w, new_h))
+        if self.is_play:
+            frame = self.player.get_frame()
+            if frame is not None:
                 h, w, c = frame.shape
                 new_h = self.windows_height - 35
                 new_w = w * new_h // h
@@ -72,11 +82,21 @@ class App(WindowGUI):
             self.text(img, 10, self.windows_height - 60, self.select, (0, 0, 0))
 
         if self.is_play:
-            self.button(img, 5, self.windows_height - 35, self.window_width - 10, 35, 'Stop', (0, 0, 255),
+            self.button(img, self.window_width // 2 + 5, self.windows_height - 35, self.window_width // 2 - 10, 35,
+                        'Стоп', (0, 0, 255),
                         lambda: self.stop())
-            self.add_img(img, 0, 0, self.frame)
+            if self.player.get_pause():
+                self.button(img, 5, self.windows_height - 35, self.window_width // 2 - 10, 35,
+                            'Продолжить', (0, 255, 0),
+                            lambda: self.pause_to_play())
+            else:
+                self.button(img, 5, self.windows_height - 35, self.window_width // 2 - 10, 35,
+                            'Пауза', (255, 0, 0),
+                            lambda: self.pause())
+            if self.frame is not None:
+                self.add_img(img, 0, 0, self.frame)
         else:
-            self.button(img, 5, self.windows_height - 35, self.window_width - 10, 35, 'Play', (0, 255, 0),
+            self.button(img, 5, self.windows_height - 35, self.window_width - 10, 35, 'Старт', (0, 255, 0),
                         lambda: self.play())
 
     def set_select(self, file):
@@ -86,11 +106,19 @@ class App(WindowGUI):
         if self.select == '':
             return
         self.is_play = True
-        self.video = cv2.VideoCapture(f'video/{self.select}')
-        self.player = MediaPlayer(f'video/{self.select}')
-        self.new_time = time.time()
+        self.player = VideoPlayer(f'video/{self.select}')
+        # self.video = cv2.VideoCapture(f'video/{self.select}')
+        # self.player = MediaPlayer(f'video/{self.select}')
+        # self.new_time = time.time()
 
     def stop(self):
         self.is_play = False
-        self.player.close_player()
+        # self.player.close_player()
+        self.player.stop()
         self.window_width = 250
+
+    def pause(self):
+        self.player.pause()
+
+    def pause_to_play(self):
+        self.player.play()
