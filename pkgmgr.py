@@ -19,7 +19,7 @@ import shutil
 
 
 def install_pkg(file_name: str, skip_question=False):
-    with open('pkglist.json') as file:
+    with open('pkglist.json', encoding='utf-8') as file:
         print('READ: pkglist.json')
         pkg_list = json.JSONDecoder().decode(file.read())
 
@@ -60,7 +60,7 @@ def install_pkg(file_name: str, skip_question=False):
 
 
 def delete_pkg(pkg_name: str):
-    with open('pkglist.json') as file:
+    with open('pkglist.json', encoding='utf-8') as file:
         print('READ: pkglist.json')
         pkg_list = json.JSONDecoder().decode(file.read())
 
