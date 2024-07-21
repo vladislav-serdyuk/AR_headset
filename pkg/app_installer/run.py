@@ -111,7 +111,7 @@ class App(WindowGUI):
                     line_num += 1
             self.text(img, 220, 110 + line_num * 30, line, (0, 0, 0))
             self.text(img, 215, self.windows_height - 60,
-                      f'Размер скч:{convert_to_kb_mb_gb(self.cur_pkg["download_size"], 1)}',
+                      f'Размер скчвния:{convert_to_kb_mb_gb(self.cur_pkg["download_size"], 1)}',
                       (0, 0, 0),
                       text_font_scale=0.6)
             if self.install_status == '':

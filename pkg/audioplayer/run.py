@@ -27,7 +27,7 @@ class App(WindowGUI):
         super().__init__(fingers_up, fingers_touch, buffer, message, landmark)
         self.windows_height = 340
         self.window_width = 430
-        self.name = 'АудиоПлейер'
+        self.name = 'Аудио плеер'
         self.audio_formats = ['mp3', 'wav', 'flac', 'ogg']
         audio_files = []
         for file in os.listdir('audio'):

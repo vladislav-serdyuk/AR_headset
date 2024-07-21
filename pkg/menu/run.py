@@ -41,7 +41,7 @@ class App(WindowGUI):
             self.hide = False
         if self.hide:
             return
-        self.button(img, 410, -40, 120, 30, 'Закрыть', (0, 0, 200), self.close)
+        self.button(img, 440, -40, 120, 30, 'Закрыть', (0, 0, 200), self.close)
         for i, app in enumerate(self.apps):
             x = i % 3 * 190
             y = i // 3 * 40
