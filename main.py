@@ -24,6 +24,7 @@ from cvzone.SelfiSegmentationModule import SelfiSegmentation
 from HandTrackingModule import HandDetector
 from flask import Flask, render_template, Response
 
+print('init')
 segmentor = SelfiSegmentation(model=1)  # remove background
 hand_detector = HandDetector(static_mode=False,
                              max_hands=1,
@@ -39,17 +40,17 @@ while True:  # auto search webcam
     cap.release()
     index += 1
 # cap = cv2.VideoCapture(0)
-app_buffer: list[str] = []
-message: list[str] = ['']
+app_buffer: list[str] = []  # see docs
+message: list[str] = ['']  # see docs
 cam_image: np.ndarray | None = None
 gui_image: np.ndarray | None = None
 result_image: np.ndarray | None = None
 h, w, c = 0, 0, 0
-fingers_touch = [0] * 4
-fingers_up = [0] * 5
-landmark = [(0, 0)] * 21
-Apps = []
-windows_positions = {}
+fingers_touch = [0] * 4  # Указ с большим ... мизинец с большим
+fingers_up = [0] * 5  # Большой ... мизинец
+landmark = [(0, 0)] * 21  # see open-cv
+Apps = []  # [index] = app
+windows_positions = {}  # {app.id: index}
 
 
 @app.route('/')
@@ -86,7 +87,7 @@ def render_gui(frame: np.ndarray):
         bbox = hand1["bbox"]  # Bounding box around the first hand (x,y,w,h coordinates)
         fingers_up[:] = hand1["fingersUp"]
 
-        for _i, tip_id in enumerate([8, 12, 16, 20]):
+        for _i, tip_id in enumerate([8, 12, 16, 20]):  # update fingers_touch
             distance = find_distance(landmark[4][0:2], landmark[tip_id][0:2])
             if distance < 30:
                 fingers_touch[_i] = 1
@@ -105,12 +106,6 @@ def render_gui(frame: np.ndarray):
             max_x = bbox[0] + bbox[2] + 20
             min_y = max(bbox[1] - 20, 0)
             max_y = bbox[1] + bbox[3] + 20
-            # frame[min_y:max_y, min_x:max_x] = (
-            #     segmentor.removeBG(copy_frame[min_y:max_y, min_x:max_x], frame[min_y:max_y, min_x:max_x], 0.3))
-            # cv2.imshow('hand', segmentor.removeBG(copy_frame[min_y:max_y, min_x:max_x],
-            #                                       cv2.cvtColor(gui_img[min_y:max_y, min_x:max_x], cv2.COLOR_BGRA2BGR),
-            #                                       0.3))
-            # cv2.waitKey(1)
             gui_img[min_y:max_y, min_x:max_x, :3] = segmentor.removeBG(copy_frame[min_y:max_y, min_x:max_x],
                                                                        cv2.cvtColor(gui_img[min_y:max_y, min_x:max_x],
                                                                                     cv2.COLOR_BGRA2BGR),
@@ -218,9 +213,14 @@ hand_on_gui = False
 show_window = True
 
 if __name__ == '__main__':
+    print('load apps')
     load_apps()
+    print('start "update result image" daemon')
     update_result_image_in_background_thread = Thread(target=update_result_image_in_background, daemon=True)
     update_result_image_in_background_thread.start()
+    print('start "update gui image" daemon')
     update_gui_image_in_background_thread = Thread(target=update_gui_image_in_background, daemon=True)
     update_gui_image_in_background_thread.start()
-    app.run(host='0.0.0.0')
+    print('server start')
+    app.run(host='0.0.0.0')  # server run
+    print('server stop')
