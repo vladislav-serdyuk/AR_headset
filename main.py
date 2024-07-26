@@ -24,22 +24,31 @@ from cvzone.SelfiSegmentationModule import SelfiSegmentation
 from HandTrackingModule import HandDetector
 from flask import Flask, render_template, Response
 
-print('init')
-segmentor = SelfiSegmentation(model=1)  # remove background
-hand_detector = HandDetector(static_mode=False,
-                             max_hands=1,
-                             model_complexity=1,
-                             detection_con=0.7,
-                             min_track_con=0.5)
+print('Hi, this is AR_headset_soft by Vlad Serdyuk\r\n'
+      'Project on github: https://github.com/vladislav-serdyuk/AR_headset')
+
+with open('config.json') as config_file:
+    config = json.JSONDecoder().decode(config_file.read())
+
+segmentor = SelfiSegmentation(model=config['segmentor']['model'])  # remove background
+hand_detector = HandDetector(static_mode=config['hand_detector']['static_mode'],
+                             max_hands=config['hand_detector']['max_hands'],
+                             model_complexity=config['hand_detector']['model_complexity'],
+                             detection_con=config['hand_detector']['detection_con'],
+                             min_track_con=config['hand_detector']['min_track_con'])
 app = Flask(__name__)  # server
-index = 0
-while True:  # auto search webcam
-    cap = cv2.VideoCapture(index)
-    if cap.read()[0]:
-        break
-    cap.release()
-    index += 1
-# cap = cv2.VideoCapture(0)
+
+if config['camera']['index'] == -1:
+    index = 0
+    while True:  # auto search webcam
+        cap = cv2.VideoCapture(index)
+        if cap.read()[0]:
+            break
+        cap.release()
+        index += 1
+else:
+    cap = cv2.VideoCapture(config['camera']['index'])
+
 app_buffer: list[str] = []  # see docs
 message: list[str] = ['']  # see docs
 cam_image: np.ndarray | None = None
@@ -49,7 +58,7 @@ h, w, c = 0, 0, 0
 fingers_touch = [0] * 4  # Указ с большим ... мизинец с большим
 fingers_up = [0] * 5  # Большой ... мизинец
 landmark = [(0, 0)] * 21  # see open-cv
-Apps = []  # [index] = app
+Apps = []  # [index] = app object
 windows_positions = {}  # {app.id: index}
 
 
@@ -68,8 +77,31 @@ def video_feed() -> Response:
     return Response(get_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
+def get_frame():
+    """
+        Получает изображение и отправляет клиенту
+        :return: Generator[bytes, Any, None]
+    """
+    while True:
+        if result_image is not None:
+            # noinspection PyTypeChecker
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', result_image)[1].tobytes() + b'\r\n')
+
+
 def find_distance(p1: tuple, p2: tuple):
     return max(abs(p1[0] - p2[0]), abs(p1[1] - p2[1]))
+
+
+def load_apps():
+    with open('pkglist.json') as file:
+        Apps[:] = [
+            importlib.import_module('pkg.' + pkg['dir'] + '.run').App(fingers_up, fingers_touch, app_buffer, message,
+                                                                      landmark)
+            for pkg in json.JSONDecoder().decode(file.read()).values()]
+        windows_positions.clear()
+        for i, _app in enumerate(Apps):
+            windows_positions[_app.id] = i
 
 
 def render_gui(frame: np.ndarray):
@@ -98,8 +130,8 @@ def render_gui(frame: np.ndarray):
             try:
                 gui(gui_img)
             except Exception as e:
-                print('ERROR in app')
-                print(e)
+                print('[WARNING] ERROR in app')
+                print(type(e), e)
 
         if hand_on_gui:
             min_x = max(bbox[0] - 20, 0)
@@ -122,8 +154,8 @@ def render_gui(frame: np.ndarray):
             try:
                 gui(gui_img)
             except Exception as e:
-                print('ERROR in app')
-                print(e)
+                print('[WARNING] ERROR in app')
+                print(type(e), e)
     gui_image = gui_img
     process_message_for_system()
 
@@ -137,7 +169,7 @@ def process_message_for_system():
         Apps[-1], Apps[pos] = Apps[pos], Apps[-1]
         message[0] = ''
     elif cmd == 'reload-apps':
-        print('reload apps')
+        print('[LOG] reload apps')
         load_apps()
         message[0] = ''
 
@@ -184,43 +216,20 @@ def update_gui_image_in_background():
             render_gui(cam_image)
 
 
-def get_frame():
-    """
-        Получает изображение и отправляет клиенту
-        :return: Generator[bytes, Any, None]
-    """
-    while True:
-        if result_image is not None:
-            # noinspection PyTypeChecker
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', result_image)[1].tobytes() + b'\r\n')
-
-
-def load_apps():
-    with open('pkglist.json') as file:
-        Apps[:] = [
-            importlib.import_module('pkg.' + pkg['dir'] + '.run').App(fingers_up, fingers_touch, app_buffer, message,
-                                                                      landmark)
-            for pkg in json.JSONDecoder().decode(file.read()).values()]
-        windows_positions.clear()
-        for i, _app in enumerate(Apps):
-            windows_positions[_app.id] = i
-
-
 # settings
-debug = True
-hand_on_gui = False
-show_window = True
+debug = config['other']['debug']
+hand_on_gui = config['other']['hand_on_gui']
+show_window = config['other']['show_window']
 
 if __name__ == '__main__':
-    print('load apps')
+    print('[LOG] load apps')
     load_apps()
-    print('start "update result image" daemon')
-    update_result_image_in_background_thread = Thread(target=update_result_image_in_background, daemon=True)
-    update_result_image_in_background_thread.start()
-    print('start "update gui image" daemon')
+    print('[LOG] start "update gui image" daemon')
     update_gui_image_in_background_thread = Thread(target=update_gui_image_in_background, daemon=True)
     update_gui_image_in_background_thread.start()
-    print('server start')
+    print('[LOG] start "update result image" daemon')
+    update_result_image_in_background_thread = Thread(target=update_result_image_in_background, daemon=True)
+    update_result_image_in_background_thread.start()
+    print('[LOG] starting server')
     app.run(host='0.0.0.0')  # server run
-    print('server stop')
+    print('[LOG] server is stopped')

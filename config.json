@@ -1,0 +1,20 @@
+{
+    "segmentor": {
+        "model": 1
+    },
+    "hand_detector": {
+        "static_mode": false,
+        "max_hands": 1,
+        "model_complexity": 1,
+        "detection_con": 0.7,
+        "min_track_con": 0.5
+    },
+    "camera": {
+        "index": -1
+    },
+    "other": {
+        "debug": true,
+        "hand_on_gui": false,
+        "show_window": true
+    }
+}

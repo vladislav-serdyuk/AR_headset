@@ -5,12 +5,18 @@
 
 ![GPL](https://www.gnu.org/graphics/gplv3-with-text-136x68.png)
 
-## Настройка
+## Начало работы
 - Установите зависимости (pip install -r requirements.txt)
 ```commandline
 pip install -r requirements.txt
 ```
 - Измените templates/index.html | div > img > width так, чтобы расстояние между картинками было равно 6см
+- Если нужно, измените config.json
+
+
+    camera.index: индекс камеры, для авто поиска используйте -1
+    other.debug: отладка
+    other.show_window: показ окна, при использаваниии на сервере отключить
 
 ## Использование
 Запуск:
