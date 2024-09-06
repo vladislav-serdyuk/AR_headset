@@ -1,4 +1,6 @@
 # AR headset soft v1.5.0
+Софт для самодельной AR гарнитуры
+
 ![logo](docs/logo.svg)
 
 ![img](./docs/GUI_exemple.png)
@@ -46,6 +48,9 @@ python main.py
 Вы можете их найти в этом репозитории https://github.com/vladislav-serdyuk/AR_headset_pkgs
 
 #### Установка и удаление
+##### Через GUI в AR
+Используйте "Установщик" и "Удаление"
+##### Через CLI
 Запустите pkgmgr.py
 ```commandline
 python pkgmgr.py
