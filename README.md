@@ -1,4 +1,4 @@
-# AR headset soft v1.5.0
+# AR headset soft v1.5.2
 Софт для самодельной AR гарнитуры
 
 ![logo](docs/logo.svg)
